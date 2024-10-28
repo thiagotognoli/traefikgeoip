@@ -91,3 +91,7 @@ To run linter and tests execute this command
 ```sh
 just test
 ```
+
+# Original Plugin
+
+This project is a fork of https://github.com/traefik-plugins/traefikgeoip2
