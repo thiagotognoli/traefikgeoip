@@ -2,7 +2,7 @@ package geoip2
 
 import "errors"
 
-func readISPMap(result *ISP, buffer []byte, mapSize uint, offset uint) (uint, error) {
+func readASNMap(result *ASN, buffer []byte, mapSize uint, offset uint) (uint, error) {
 	var key []byte
 	var err error
 	for i := uint(0); i < mapSize; i++ {
@@ -21,18 +21,8 @@ func readISPMap(result *ISP, buffer []byte, mapSize uint, offset uint) (uint, er
 			if err != nil {
 				return 0, err
 			}
-		case "isp":
-			result.ISP, offset, err = readString(buffer, offset)
-			if err != nil {
-				return 0, err
-			}
-		case "organization":
-			result.Organization, offset, err = readString(buffer, offset)
-			if err != nil {
-				return 0, err
-			}
 		default:
-			return 0, errors.New("unknown isp key: " + string(key))
+			return 0, errors.New("unknown asn key: " + string(key))
 		}
 	}
 	return offset, nil

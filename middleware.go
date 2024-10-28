@@ -1,5 +1,5 @@
-// Package traefikgeoip2 is a Traefik plugin for Maxmind GeoIP2.
-package traefikgeoip2
+// Package traefikgeoip is a Traefik plugin for Maxmind GeoIP2.
+package traefikgeoip
 
 import (
 	"context"
@@ -9,7 +9,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/IncSW/geoip2"
+	"github.com/thiagotognoli/traefikgeoip/geoip2"
 )
 
 var lookup LookupGeoIP2

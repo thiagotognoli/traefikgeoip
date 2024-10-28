@@ -1,3 +1,5 @@
+[Forked from](https://github.com/IncSW/geoip2) to support yaegi with new features
+
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE)
 [![Go Report Card](https://goreportcard.com/badge/github.com/IncSW/geoip2?style=flat-square)](https://goreportcard.com/report/github.com/IncSW/geoip2)
 [![Go Doc](https://img.shields.io/badge/godoc-reference-blue.svg?style=flat-square)](https://pkg.go.dev/github.com/IncSW/geoip2?tab=doc)
@@ -57,6 +59,37 @@ isp_parallel-24                14285560    84.4 ns/op    112 B/op     4 allocs/o
 connection_type-24              3883234     305 ns/op     32 B/op     2 allocs/op
 connection_type_parallel-24    34284831    32.1 ns/op     32 B/op     2 allocs/op
 ```
+
+## Supported databases types
+
+### Country
+- GeoIP2-Country
+- GeoLite2-Country
+- DBIP-Country
+- DBIP-Country-Lite
+
+### City
+- GeoIP2-City
+- GeoLite2-City
+- GeoIP2-Enterprise
+- DBIP-City-Lite
+
+### ISP
+- GeoIP2-ISP
+
+### ASN
+- GeoLite2-ASN
+- DBIP-ASN-Lite
+- DBIP-ASN-Lite (compat=GeoLite2-ASN)
+
+### Connection Type
+- GeoIP2-Connection-Type
+
+### Anonymous IP
+- GeoIP2-Anonymous-IP
+
+### Domain
+- GeoIP2-Domain
 
 ## License
 

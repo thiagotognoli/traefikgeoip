@@ -1,7 +1,7 @@
 run:
   timeout: 3m
-  skip-files: []
-  skip-dirs: []
+#  skip-files: []
+#  skip-dirs: [geoip2]
 
 linters-settings:
   govet:
@@ -25,21 +25,31 @@ linters-settings:
       - FIXME
   gofumpt:
     extra-rules: true
+  depguard:
+    rules:
+      Main:
+        allow:
+          - $gostd
+          - github.com/thiagotognoli/traefikgeoip
+          #- github.com/IncSW/geoip2
 
 linters:
   enable-all: true
   disable:
-    - deadcode # deprecated
-    - exhaustivestruct # deprecated
-    - golint # deprecated
-    - ifshort # deprecated
-    - interfacer # deprecated
-    - maligned # deprecated
-    - nosnakecase # deprecated
-    - scopelint # deprecated
-    - scopelint # deprecated
-    - structcheck # deprecated
-    - varcheck # deprecated
+    #- deadcode # deprecated
+    #- exhaustivestruct # deprecated
+    #- golint # deprecated
+    #- ifshort # deprecated
+    #- interfacer # deprecated
+    #- maligned # deprecated
+    #- nosnakecase # deprecated
+    #- scopelint # deprecated
+    #- scopelint # deprecated
+    #- structcheck # deprecated
+    #- varcheck # deprecated
+    #- ifshort #deprecated
+    - perfsprint
+    - canonicalheader
     - sqlclosecheck # not relevant (SQL)
     - rowserrcheck # not relevant (SQL)
     - execinquery # not relevant (SQL)
@@ -53,9 +63,8 @@ linters:
     - wsl
     - exhaustive
     - exhaustruct
-    - goerr113
+    - err113
     - wrapcheck
-    - ifshort
     - noctx
     - lll
     - gomnd
@@ -67,6 +76,7 @@ issues:
   max-per-linter: 0
   max-same-issues: 0
   exclude: []
+  exclude-dirs: [geoip2]
   exclude-rules:
     - path: middleware.go
       linters:

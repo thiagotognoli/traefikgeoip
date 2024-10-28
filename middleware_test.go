@@ -1,4 +1,4 @@
-package traefikgeoip2_test
+package traefikgeoip_test
 
 import (
 	"context"
@@ -7,7 +7,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	mw "github.com/traefik-plugins/traefikgeoip2"
+	mw "github.com/thiagotognoli/traefikgeoip"
 )
 
 const (
@@ -41,7 +41,7 @@ func TestGeoIPBasic(t *testing.T) {
 	mwCfg.DBPath = "./GeoLite2-City.mmdb"
 
 	called := false
-	next := http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) { called = true })
+	next := http.HandlerFunc(func(_ http.ResponseWriter, _ *http.Request) { called = true })
 
 	mw.ResetLookup()
 	instance, err := mw.New(context.TODO(), next, mwCfg, "traefik-geoip2")
@@ -66,7 +66,7 @@ func TestMissingGeoIPDB(t *testing.T) {
 	mwCfg.DBPath = "./missing"
 
 	called := false
-	next := http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) { called = true })
+	next := http.HandlerFunc(func(_ http.ResponseWriter, _ *http.Request) { called = true })
 
 	mw.ResetLookup()
 	instance, err := mw.New(context.TODO(), next, mwCfg, "traefik-geoip2")
@@ -95,7 +95,7 @@ func TestGeoIPFromRemoteAddr(t *testing.T) {
 	mwCfg := mw.CreateConfig()
 	mwCfg.DBPath = "./GeoLite2-City.mmdb"
 
-	next := http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {})
+	next := http.HandlerFunc(func(_ http.ResponseWriter, _ *http.Request) {})
 	mw.ResetLookup()
 	instance, _ := mw.New(context.TODO(), next, mwCfg, "traefik-geoip2")
 
@@ -129,7 +129,7 @@ func TestGeoIPFromXForwardedFor(t *testing.T) {
 	mwCfg.DBPath = "./GeoLite2-City.mmdb"
 	mwCfg.PreferXForwardedForHeader = true
 
-	next := http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {})
+	next := http.HandlerFunc(func(_ http.ResponseWriter, _ *http.Request) {})
 	mw.ResetLookup()
 	instance, _ := mw.New(context.TODO(), next, mwCfg, "traefik-geoip2")
 
@@ -165,7 +165,7 @@ func TestGeoIPCountryDBFromRemoteAddr(t *testing.T) {
 	mwCfg := mw.CreateConfig()
 	mwCfg.DBPath = "./GeoLite2-Country.mmdb"
 
-	next := http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {})
+	next := http.HandlerFunc(func(_ http.ResponseWriter, _ *http.Request) {})
 	mw.ResetLookup()
 	instance, _ := mw.New(context.TODO(), next, mwCfg, "traefik-geoip2")
 

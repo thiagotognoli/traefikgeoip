@@ -6,7 +6,9 @@
     "mmdb",
     "modulename",
     "traefikgeoip",
-    "xvzf"
+    "xvzf",
+    "golangci",
+    "yaegi"
   ],
   "flagWords": [],
   "language": "en",

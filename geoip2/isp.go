@@ -2,7 +2,7 @@ package geoip2
 
 import "errors"
 
-func readASNMap(result *ASN, buffer []byte, mapSize uint, offset uint) (uint, error) {
+func readISPMap(result *ISP, buffer []byte, mapSize uint, offset uint) (uint, error) {
 	var key []byte
 	var err error
 	for i := uint(0); i < mapSize; i++ {
@@ -18,6 +18,26 @@ func readASNMap(result *ASN, buffer []byte, mapSize uint, offset uint) (uint, er
 			}
 		case "autonomous_system_organization":
 			result.AutonomousSystemOrganization, offset, err = readString(buffer, offset)
+			if err != nil {
+				return 0, err
+			}
+		case "isp":
+			result.ISP, offset, err = readString(buffer, offset)
+			if err != nil {
+				return 0, err
+			}
+		case "organization":
+			result.Organization, offset, err = readString(buffer, offset)
+			if err != nil {
+				return 0, err
+			}
+		case "mobile_country_code":
+			result.MobileCountryCode, offset, err = readString(buffer, offset)
+			if err != nil {
+				return 0, err
+			}
+		case "mobile_network_code":
+			result.MobileNetworkCode, offset, err = readString(buffer, offset)
 			if err != nil {
 				return 0, err
 			}

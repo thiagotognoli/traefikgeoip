@@ -1,5 +1,3 @@
-module github.com/traefik-plugins/traefikgeoip2
+module github.com/thiagotognoli/traefikgeoip
 
-go 1.19
-
-require github.com/IncSW/geoip2 v0.1.1
+go 1.23

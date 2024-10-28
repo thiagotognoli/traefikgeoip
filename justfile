@@ -22,11 +22,15 @@ test-yaegi: && _clean-yaegi
   set -euox
 
   TMP=$(mktemp -d yaegi.XXXXXX -p /tmp)
-  WRK="${TMP}/go/src/github.com/traefik-plugins"
+  WRK="${TMP}/go/src/github.com/thiagotognoli"
   mkdir -p ${WRK}
   ln -s `pwd` "${WRK}"
   cd "${WRK}/$(basename `pwd`)"
   env GOPATH="${TMP}/go" yaegi test -v .
+#  WRKINCSW="${TMP}/go/src/github.com/IncSW"
+#  mkdir -p ${WRKINCSW}
+#  ln -s `pwd`/vendor/github.com/IncSW/geoip2 "${WRKINCSW}"
+#  export GOFLAGS=-mod=vendor
 
 # lint and test
 test: _prepare lint test-go test-yaegi

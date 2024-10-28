@@ -31,7 +31,7 @@ The following snippet should be added to `values.yaml`:
 experimental:
   plugins:
     geoip2:
-      moduleName: github.com/traefik-plugins/traefikgeoip2
+      moduleName: github.com/thiagotognoli/traefikgeoip
       version: v0.22.0
 deployment:
   additionalVolumes:
@@ -47,7 +47,7 @@ deployment:
         - "/bin/sh"
         - "-ce"
         - |
-          wget -P /tmp https://raw.githubusercontent.com/traefik-plugins/traefikgeoip2/main/geolite2.tgz
+          wget -P /tmp https://raw.githubusercontent.com/thiagotognoli/traefikgeoip/main/geolite2.tgz
           tar --directory /tmp/geoip2 -xvzf /tmp/geolite2.tgz
 additionalVolumeMounts:
   - name: geoip2
@@ -78,6 +78,13 @@ DbPath | **Required** Container path to GeoIP database.
 PreferXForwardedForHeader | Should `X-Forwarded-For` header be used to extract IP address. Default `false`.
 
 ## Development
+
+Install Go, golangci-lint, yaegi and just
+
+```sh
+brew install go golangci-lint just
+go install github.com/traefik/yaegi/cmd/yaegi@latest
+```
 
 To run linter and tests execute this command
 

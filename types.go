@@ -1,10 +1,10 @@
-package traefikgeoip2
+package traefikgeoip
 
 import (
 	"fmt"
 	"net"
 
-	"github.com/IncSW/geoip2"
+	"github.com/thiagotognoli/traefikgeoip/geoip2"
 )
 
 // Unknown constant for undefined data.
