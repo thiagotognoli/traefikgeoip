@@ -69,7 +69,7 @@ func TestMissingGeoIPDB(t *testing.T) {
 	next := http.HandlerFunc(func(_ http.ResponseWriter, _ *http.Request) { called = true })
 
 	mw.ResetLookup()
-	instance, err := mw.New(context.TODO(), next, mwCfg, "traefik-geoip2")
+	instance, err := mw.New(context.TODO(), next, mwCfg, "traefik-geoip")
 	if err != nil {
 		t.Fatalf("Error creating %v", err)
 	}

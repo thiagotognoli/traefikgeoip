@@ -8,7 +8,8 @@
     "traefikgeoip",
     "xvzf",
     "golangci",
-    "yaegi"
+    "yaegi",
+    "Geohash"
   ],
   "flagWords": [],
   "language": "en",
