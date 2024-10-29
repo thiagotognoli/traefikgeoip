@@ -2,7 +2,6 @@
 @default:
   just --list
 
-
 @_prepare:
   #!/usr/bin/env bash
   cd data
@@ -10,6 +9,10 @@
   go run main.go -i GeoLite2-City.json -o tmp/GeoLite2-City.mmdb -t GeoLite2-City
   go run main.go -i GeoLite2-ASN.json -o tmp/GeoLite2-ASN.mmdb -t GeoLite2-ASN
   go run main.go -i GeoLite2-Country.json -o tmp/GeoLite2-Country.mmdb -t GeoLite2-Country
+
+dist:
+  #!/usr/bin/env bash
+  ./utils/dist.sh
 
 format:
   gofumpt -w -extra .
