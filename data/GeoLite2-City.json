@@ -1,0 +1,220 @@
+{
+  "188.193.88.199/23": {
+    "city": {
+      "geoname_id": 2867714,
+      "names": {
+        "de": "München",
+        "en": "Munich",
+        "es": "Múnich",
+        "fr": "Munich",
+        "ja": "ミュンヘン",
+        "pt-BR": "Munique",
+        "ru": "Мюнхен",
+        "zh-CN": "慕尼黑"
+      }
+    },
+    "continent": {
+      "code": "EU",
+      "geoname_id": 6255148,
+      "names": {
+        "de": "Europa",
+        "en": "Europe",
+        "es": "Europa",
+        "fr": "Europe",
+        "ja": "ヨーロッパ",
+        "pt-BR": "Europa",
+        "ru": "Европа",
+        "zh-CN": "欧洲"
+      }
+    },
+    "country": {
+      "geoname_id": 2921044,
+      "is_in_european_union": true,
+      "iso_code": "DE",
+      "names": {
+        "de": "Deutschland",
+        "en": "Germany",
+        "es": "Alemania",
+        "fr": "Allemagne",
+        "ja": "ドイツ連邦共和国",
+        "pt-BR": "Alemanha",
+        "ru": "ФРГ",
+        "zh-CN": "德国"
+      }
+    },
+    "location": {
+      "accuracy_radius": 10,
+      "latitude": 48.1663,
+      "longitude": 11.5683,
+      "time_zone": "Europe/Berlin"
+    },
+    "postal": {
+      "code": "80539"
+    },
+    "registered_country": {
+      "geoname_id": 2921044,
+      "is_in_european_union": true,
+      "iso_code": "DE",
+      "names": {
+        "de": "Deutschland",
+        "en": "Germany",
+        "es": "Alemania",
+        "fr": "Allemagne",
+        "ja": "ドイツ連邦共和国",
+        "pt-BR": "Alemanha",
+        "ru": "ФРГ",
+        "zh-CN": "德国"
+      }
+    },
+    "subdivisions": [
+      {
+        "geoname_id": 2951839,
+        "iso_code": "BY",
+        "names": {
+          "de": "Bayern",
+          "en": "Bavaria",
+          "es": "Baviera",
+          "fr": "Bavière",
+          "ja": "バイエルン",
+          "pt-BR": "Baviera",
+          "ru": "Бавария",
+          "zh-CN": "巴伐利亚州"
+        }
+      }
+    ]
+  },
+  "188.193.88.200/23": {
+    "city": {
+      "geoname_id": 2867714,
+      "names": {
+        "de": "München",
+        "en": "Munich",
+        "es": "Múnich",
+        "fr": "Munich",
+        "ja": "ミュンヘン",
+        "pt-BR": "Munique",
+        "ru": "Мюнхен",
+        "zh-CN": "慕尼黑"
+      }
+    },
+    "continent": {
+      "code": "EU",
+      "geoname_id": 6255148,
+      "names": {
+        "de": "Europa",
+        "en": "Europe",
+        "es": "Europa",
+        "fr": "Europe",
+        "ja": "ヨーロッパ",
+        "pt-BR": "Europa",
+        "ru": "Европа",
+        "zh-CN": "欧洲"
+      }
+    },
+    "country": {
+      "geoname_id": 2921044,
+      "is_in_european_union": true,
+      "iso_code": "DE",
+      "names": {
+        "de": "Deutschland",
+        "en": "Germany",
+        "es": "Alemania",
+        "fr": "Allemagne",
+        "ja": "ドイツ連邦共和国",
+        "pt-BR": "Alemanha",
+        "ru": "ФРГ",
+        "zh-CN": "德国"
+      }
+    },
+    "location": {
+      "accuracy_radius": 5,
+      "latitude": 48.1623,
+      "longitude": 11.4663,
+      "time_zone": "Europe/Berlin"
+    },
+    "postal": {
+      "code": "81539"
+    },
+    "registered_country": {
+      "geoname_id": 2921044,
+      "is_in_european_union": true,
+      "iso_code": "DE",
+      "names": {
+        "de": "Deutschland",
+        "en": "Germany",
+        "es": "Alemania",
+        "fr": "Allemagne",
+        "ja": "ドイツ連邦共和国",
+        "pt-BR": "Alemanha",
+        "ru": "ФРГ",
+        "zh-CN": "德国"
+      }
+    },
+    "subdivisions": [
+      {
+        "geoname_id": 2951839,
+        "iso_code": "BY",
+        "names": {
+          "de": "Bayern",
+          "en": "Bavaria",
+          "es": "Baviera",
+          "fr": "Bavière",
+          "ja": "バイエルン",
+          "pt-BR": "Baviera",
+          "ru": "Бавария",
+          "zh-CN": "巴伐利亚州"
+        }
+      }
+    ]
+  },
+  "20.1.184.61/12": {
+    "continent": {
+      "code": "NA",
+      "geoname_id": 6255149,
+      "names": {
+        "de": "Nordamerika",
+        "en": "North America",
+        "es": "Norteamérica",
+        "fr": "Amérique du Nord",
+        "ja": "北アメリカ",
+        "pt-BR": "América do Norte",
+        "ru": "Северная Америка",
+        "zh-CN": "北美洲"
+      }
+    },
+    "country": {
+      "geoname_id": 6252001,
+      "iso_code": "US",
+      "names": {
+        "de": "USA",
+        "en": "United States",
+        "es": "Estados Unidos",
+        "fr": "États-Unis",
+        "ja": "アメリカ合衆国",
+        "pt-BR": "Estados Unidos",
+        "ru": "США",
+        "zh-CN": "美国"
+      }
+    },
+    "location": {
+      "accuracy_radius": 1000,
+      "latitude": 37.751,
+      "longitude": -97.822,
+      "time_zone": "America/Chicago"
+    },
+    "registered_country": {
+      "geoname_id": 6252001,
+      "iso_code": "US",
+      "names": {
+        "de": "USA",
+        "en": "United States",
+        "es": "Estados Unidos",
+        "fr": "États-Unis",
+        "ja": "アメリカ合衆国",
+        "pt-BR": "Estados Unidos",
+        "ru": "США",
+        "zh-CN": "美国"
+      }
+    }
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "188.193.88.199/16": {
+    "autonomous_system_number": 3209,
+    "autonomous_system_organization": "Vodafone GmbH"
+  },
+  "188.193.88.200/16": {
+    "autonomous_system_number": 3209,
+    "autonomous_system_organization": "Vodafone GmbH"
+  },
+  "20.1.184.61/11": {
+    "autonomous_system_number": 8075,
+    "autonomous_system_organization": "MICROSOFT-CORP-MSN-AS-BLOCK"
+  }
+}

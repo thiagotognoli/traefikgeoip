@@ -2,8 +2,21 @@
 @default:
   just --list
 
+prepare:
+  #!/usr/bin/env bash
+  cd data
+  mkdir -p tmp
+  go run main.go -i GeoLite2-City.json -o tmp/GeoLite2-City.mmdb -t GeoLite2-City
+  go run main.go -i GeoLite2-ASN.json -o tmp/GeoLite2-ASN.mmdb -t GeoLite2-ASN
+  go run main.go -i GeoLite2-Country.json -o tmp/GeoLite2-Country.mmdb -t GeoLite2-Country
+
 @_prepare:
-  tar -xvzf geolite2.tgz
+  #!/usr/bin/env bash
+  cd data
+  mkdir -p tmp
+  go run main.go -i GeoLite2-City.json -o tmp/GeoLite2-City.mmdb -t GeoLite2-City
+  go run main.go -i GeoLite2-ASN.json -o tmp/GeoLite2-ASN.mmdb -t GeoLite2-ASN
+  go run main.go -i GeoLite2-Country.json -o tmp/GeoLite2-Country.mmdb -t GeoLite2-Country
 
 # lint go files
 lint:

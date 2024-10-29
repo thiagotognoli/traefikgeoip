@@ -8,4 +8,5 @@ import: github.com/thiagotognoli/traefikgeoip
 
 testData:
   dbPath: 'GeoLite2-Country.mmdb'
+  dbAsnPath: 'GeoLite2-ASN.mmdb'
   preferXForwardedForHeader: false

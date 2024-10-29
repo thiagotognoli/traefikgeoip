@@ -22,6 +22,7 @@ func ResetLookup() {
 // Config the plugin configuration.
 type Config struct {
 	DBPath                    string `json:"dbPath,omitempty"`
+	DBAsnPath                 string `json:"dBAsnPath,omitempty"`
 	PreferXForwardedForHeader bool
 }
 

@@ -38,13 +38,13 @@ func TestGeoIPConfig(t *testing.T) {
 
 func TestGeoIPBasic(t *testing.T) {
 	mwCfg := mw.CreateConfig()
-	mwCfg.DBPath = "./GeoLite2-City.mmdb"
+	mwCfg.DBPath = "data/tmp/GeoLite2-City.mmdb"
 
 	called := false
 	next := http.HandlerFunc(func(_ http.ResponseWriter, _ *http.Request) { called = true })
 
 	mw.ResetLookup()
-	instance, err := mw.New(context.TODO(), next, mwCfg, "traefik-geoip2")
+	instance, err := mw.New(context.TODO(), next, mwCfg, "traefik-geoip")
 	if err != nil {
 		t.Fatalf("Error creating %v", err)
 	}
@@ -93,11 +93,11 @@ func TestMissingGeoIPDB(t *testing.T) {
 
 func TestGeoIPFromRemoteAddr(t *testing.T) {
 	mwCfg := mw.CreateConfig()
-	mwCfg.DBPath = "./GeoLite2-City.mmdb"
+	mwCfg.DBPath = "data/tmp/GeoLite2-City.mmdb"
 
 	next := http.HandlerFunc(func(_ http.ResponseWriter, _ *http.Request) {})
 	mw.ResetLookup()
-	instance, _ := mw.New(context.TODO(), next, mwCfg, "traefik-geoip2")
+	instance, _ := mw.New(context.TODO(), next, mwCfg, "traefik-geoip")
 
 	req := httptest.NewRequest(http.MethodGet, "http://localhost", nil)
 	req.RemoteAddr = fmt.Sprintf("%s:9999", ValidIP)
@@ -126,12 +126,12 @@ func TestGeoIPFromRemoteAddr(t *testing.T) {
 
 func TestGeoIPFromXForwardedFor(t *testing.T) {
 	mwCfg := mw.CreateConfig()
-	mwCfg.DBPath = "./GeoLite2-City.mmdb"
+	mwCfg.DBPath = "data/tmp/GeoLite2-City.mmdb"
 	mwCfg.PreferXForwardedForHeader = true
 
 	next := http.HandlerFunc(func(_ http.ResponseWriter, _ *http.Request) {})
 	mw.ResetLookup()
-	instance, _ := mw.New(context.TODO(), next, mwCfg, "traefik-geoip2")
+	instance, _ := mw.New(context.TODO(), next, mwCfg, "traefik-geoip")
 
 	req := httptest.NewRequest(http.MethodGet, "http://localhost", nil)
 	req.RemoteAddr = fmt.Sprintf("%s:9999", ValidIP)
@@ -163,11 +163,11 @@ func TestGeoIPFromXForwardedFor(t *testing.T) {
 
 func TestGeoIPCountryDBFromRemoteAddr(t *testing.T) {
 	mwCfg := mw.CreateConfig()
-	mwCfg.DBPath = "./GeoLite2-Country.mmdb"
+	mwCfg.DBPath = "data/tmp/GeoLite2-Country.mmdb"
 
 	next := http.HandlerFunc(func(_ http.ResponseWriter, _ *http.Request) {})
 	mw.ResetLookup()
-	instance, _ := mw.New(context.TODO(), next, mwCfg, "traefik-geoip2")
+	instance, _ := mw.New(context.TODO(), next, mwCfg, "traefik-geoip")
 
 	req := httptest.NewRequest(http.MethodGet, "http://localhost", nil)
 	req.RemoteAddr = fmt.Sprintf("%s:9999", ValidIP)

@@ -48,6 +48,8 @@ const (
 	LatitudeHeader = "GeoIP-Latitude"
 	// LongitudeHeader longitude header name.
 	LongitudeHeader = "GeoIP-Longitude"
+	// AccuracyRadiusHeader coord accuracy radius header name.
+	AccuracyRadiusHeader = "GeoIP-Accuracy-Radius"
 	// GeohashHeader geohash header name.
 	GeohashHeader = "GeoIP-Geohash"
 

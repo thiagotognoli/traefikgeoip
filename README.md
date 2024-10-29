@@ -95,3 +95,5 @@ just test
 # Original Plugin
 
 This project is a fork of https://github.com/traefik-plugins/traefikgeoip2
+
+and some parts of https://github.com/Maronato/traefik_geoip
