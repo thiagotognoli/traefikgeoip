@@ -27,6 +27,7 @@ type Options struct {
 	IPHeader                  string `json:"ipHeader,omitempty"`
 	FailInError               bool   `json:"failInError,omitempty"`
 	Debug                     bool   `json:"debug,omitempty"`
+	LightMode                 bool   `json:"lightMode,omitempty"`
 }
 
 // Config the plugin configuration.
@@ -38,6 +39,7 @@ type Config struct {
 	IPHeader                  string `json:"ipHeader,omitempty"`
 	FailInError               bool   `json:"failInError,omitempty"`
 	Debug                     bool   `json:"debug,omitempty"`
+	LightMode                 bool   `json:"lightMode,omitempty"`
 }
 
 // ConfigToOptions converts the plugin configuration to plugin options.
@@ -47,6 +49,7 @@ func ConfigToOptions(config *Config) Options {
 		IPHeader:                  config.IPHeader,
 		FailInError:               config.FailInError,
 		Debug:                     config.Debug,
+		LightMode:                 config.LightMode,
 	}
 }
 

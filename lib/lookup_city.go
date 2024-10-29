@@ -2,7 +2,6 @@ package lib
 
 import (
 	"fmt"
-	"log"
 	"net"
 	"os"
 	"strconv"
@@ -67,18 +66,15 @@ func CreateCityDBLookup(rdr *geoip2.CityReader) LookupGeoIPCity {
 // NewLookupCity Create a new Lookup.
 func NewLookupCity(dbPath, name string) (LookupGeoIPCity, error) {
 	if _, err := os.Stat(dbPath); err != nil {
-		return nil, fmt.Errorf("[geoip2] City DB not found: db=%s, name=%s, err=%w", dbPath, name, err)
+		return nil, fmt.Errorf("city DB not found: db=%s, name=%s, err=%w", dbPath, name, err)
 	}
 	var lookupCity LookupGeoIPCity
 
 	rdr, err := geoip2.NewCityReaderFromFile(dbPath)
 	if err != nil {
-		log.Printf("[geoip2] City lookup DB is not initialized: db=%s, name=%s, err=%v", dbPath, name, err)
-	} else {
-		lookupCity = CreateCityDBLookup(rdr)
-		log.Printf("[geoip2] City lookup DB initialized: db=%s, name=%s, lookup=%v", dbPath, name, lookupCity)
+		return nil, fmt.Errorf("city lookup DB is not initialized: db=%s, name=%s, err=%w", dbPath, name, err)
 	}
-	// }
-
+	lookupCity = CreateCityDBLookup(rdr)
+	// log.Printf("[geoip2] City lookup DB initialized: db=%s, name=%s, lookup=%v", dbPath, name, lookupCity)
 	return lookupCity, nil
 }

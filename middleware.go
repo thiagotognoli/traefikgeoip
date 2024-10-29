@@ -25,6 +25,8 @@ func CreateConfig() *lib.Config {
 }
 
 // New created a new TraefikGeoIP plugin.
+//
+//nolint:gocyclo
 func New(_ context.Context, next http.Handler, cfg *lib.Config, name string) (http.Handler, error) {
 	lookupCity, lookupCountry, lookupAsn, err := factoryLookups(cfg, name)
 	if err != nil {
@@ -43,12 +45,28 @@ func New(_ context.Context, next http.Handler, cfg *lib.Config, name string) (ht
 	}
 
 	switch {
+	case cfg.LightMode && lookupCity != nil && lookupAsn != nil:
+		return &lib.TraefikGeoIPCityAsnLightMode{
+			Next:       next,
+			Name:       name,
+			Options:    lib.ConfigToOptions(cfg),
+			LookupAsn:  lookupAsn,
+			LookupCity: lookupCity,
+		}, nil
+
 	case lookupCity != nil && lookupAsn != nil:
 		return &lib.TraefikGeoIPCityAsn{
 			Next:       next,
 			Name:       name,
 			Options:    lib.ConfigToOptions(cfg),
 			LookupAsn:  lookupAsn,
+			LookupCity: lookupCity,
+		}, nil
+	case cfg.LightMode && lookupCity != nil:
+		return &lib.TraefikGeoIPCityLightMode{
+			Next:       next,
+			Name:       name,
+			Options:    lib.ConfigToOptions(cfg),
 			LookupCity: lookupCity,
 		}, nil
 	case lookupCity != nil:

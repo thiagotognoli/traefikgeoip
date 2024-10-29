@@ -2,7 +2,6 @@ package lib
 
 import (
 	"fmt"
-	"log"
 	"net"
 	"os"
 
@@ -39,18 +38,15 @@ func CreateCountryDBLookup(rdr *geoip2.CountryReader) LookupGeoIPCountry {
 // NewLookupCountry Create a new Lookup.
 func NewLookupCountry(dbPath, name string) (LookupGeoIPCountry, error) {
 	if _, err := os.Stat(dbPath); err != nil {
-		return nil, fmt.Errorf("[geoip2] Country DB not found: db=%s, name=%s, err=%w", dbPath, name, err)
+		return nil, fmt.Errorf("country DB not found: db=%s, name=%s, err=%w", dbPath, name, err)
 	}
 	var lookupCountry LookupGeoIPCountry
 
 	rdr, err := geoip2.NewCountryReaderFromFile(dbPath)
 	if err != nil {
-		log.Printf("[geoip2] Country lookup DB is not initialized: db=%s, name=%s, err=%v", dbPath, name, err)
-	} else {
-		lookupCountry = CreateCountryDBLookup(rdr)
-		log.Printf("[geoip2] Country lookup DB initialized: db=%s, name=%s, lookup=%v", dbPath, name, lookupCountry)
+		return nil, fmt.Errorf("country lookup DB is not initialized: db=%s, name=%s, err=%w", dbPath, name, err)
 	}
-	// }
-
+	lookupCountry = CreateCountryDBLookup(rdr)
+	// log.Printf("[geoip2] Country lookup DB initialized: db=%s, name=%s, lookup=%v", dbPath, name, lookupCountry)
 	return lookupCountry, nil
 }

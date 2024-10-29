@@ -2,7 +2,6 @@ package lib
 
 import (
 	"fmt"
-	"log"
 	"net"
 	"os"
 	"strconv"
@@ -37,18 +36,15 @@ func CreateAsnDBLookup(rdr *geoip2.ASNReader) LookupGeoIPAsn {
 // NewLookupAsn Create a new Lookup.
 func NewLookupAsn(dbPath, name string) (LookupGeoIPAsn, error) {
 	if _, err := os.Stat(dbPath); err != nil {
-		return nil, fmt.Errorf("[geoip2] ASN DB not found: db=%s, name=%s, err=%w", dbPath, name, err)
+		return nil, fmt.Errorf("asn DB not found: db=%s, name=%s, err=%w", dbPath, name, err)
 	}
 	var lookupAsn LookupGeoIPAsn
 
 	rdr, err := geoip2.NewASNReaderFromFile(dbPath)
 	if err != nil {
-		log.Printf("[geoip2] ASN lookup DB is not initialized: db=%s, name=%s, err=%v", dbPath, name, err)
-	} else {
-		lookupAsn = CreateAsnDBLookup(rdr)
-		log.Printf("[geoip2] ASN lookup DB initialized: db=%s, name=%s, lookup=%v", dbPath, name, lookupAsn)
+		return nil, fmt.Errorf("asn lookup DB is not initialized: db=%s, name=%s, err=%w", dbPath, name, err)
 	}
-	// }
-
+	lookupAsn = CreateAsnDBLookup(rdr)
+	// log.Printf("[geoip2] ASN lookup DB initialized: db=%s, name=%s, lookup=%v", dbPath, name, lookupAsn)
 	return lookupAsn, nil
 }
