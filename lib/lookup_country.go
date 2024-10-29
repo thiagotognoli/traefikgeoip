@@ -1,9 +1,10 @@
-package traefikgeoip
+package lib
 
 import (
 	"fmt"
 	"log"
 	"net"
+	"os"
 
 	"github.com/thiagotognoli/traefikgeoip/geoip2"
 )
@@ -36,9 +37,12 @@ func CreateCountryDBLookup(rdr *geoip2.CountryReader) LookupGeoIPCountry {
 }
 
 // NewLookupCountry Create a new Lookup.
-func NewLookupCountry(lookupCountry LookupGeoIPCountry, dbPath, name string) (LookupGeoIPCountry, error) {
-	// var lookupCountry LookupGeoIPCountry
-	// if lookupCountry == nil {
+func NewLookupCountry(dbPath, name string) (LookupGeoIPCountry, error) {
+	if _, err := os.Stat(dbPath); err != nil {
+		return nil, fmt.Errorf("[geoip2] Country DB not found: db=%s, name=%s, err=%w", dbPath, name, err)
+	}
+	var lookupCountry LookupGeoIPCountry
+
 	rdr, err := geoip2.NewCountryReaderFromFile(dbPath)
 	if err != nil {
 		log.Printf("[geoip2] Country lookup DB is not initialized: db=%s, name=%s, err=%v", dbPath, name, err)

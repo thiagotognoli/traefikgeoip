@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	mw "github.com/thiagotognoli/traefikgeoip"
+	lmw "github.com/thiagotognoli/traefikgeoip/lib"
 )
 
 const (
@@ -87,10 +88,10 @@ func TestMissingGeoIPDB(t *testing.T) {
 	if called != true {
 		t.Fatalf("next handler was not called")
 	}
-	assertHeader(t, req, mw.CountryHeader, mw.Unknown)
-	assertHeader(t, req, mw.RegionHeader, mw.Unknown)
-	assertHeader(t, req, mw.CityHeader, mw.Unknown)
-	assertHeader(t, req, mw.IPAddressHeader, "1.2.3.4")
+	assertHeader(t, req, lmw.CountryHeader, "")
+	assertHeader(t, req, lmw.RegionHeader, "")
+	assertHeader(t, req, lmw.CityHeader, "")
+	assertHeader(t, req, lmw.IPAddressHeader, "1.2.3.4")
 }
 
 func TestGeoIPFromRemoteAddr(t *testing.T) {
@@ -104,26 +105,26 @@ func TestGeoIPFromRemoteAddr(t *testing.T) {
 	req := httptest.NewRequest(http.MethodGet, "http://localhost", nil)
 	req.RemoteAddr = fmt.Sprintf("%s:9999", ValidIP)
 	instance.ServeHTTP(httptest.NewRecorder(), req)
-	assertHeader(t, req, mw.CountryCodeHeader, "DE")
-	assertHeader(t, req, mw.RegionCodeHeader, "BY")
-	assertHeader(t, req, mw.CityHeader, "Munich")
-	assertHeader(t, req, mw.IPAddressHeader, ValidIP)
+	assertHeader(t, req, lmw.CountryCodeHeader, "DE")
+	assertHeader(t, req, lmw.RegionCodeHeader, "BY")
+	assertHeader(t, req, lmw.CityHeader, "Munich")
+	assertHeader(t, req, lmw.IPAddressHeader, ValidIP)
 
 	req = httptest.NewRequest(http.MethodGet, "http://localhost", nil)
 	req.RemoteAddr = fmt.Sprintf("%s:9999", ValidIPNoCity)
 	instance.ServeHTTP(httptest.NewRecorder(), req)
-	assertHeader(t, req, mw.CountryCodeHeader, "US")
-	assertHeader(t, req, mw.RegionCodeHeader, mw.Unknown)
-	assertHeader(t, req, mw.CityHeader, mw.Unknown)
-	assertHeader(t, req, mw.IPAddressHeader, ValidIPNoCity)
+	assertHeader(t, req, lmw.CountryCodeHeader, "US")
+	assertHeader(t, req, lmw.RegionCodeHeader, lmw.Unknown)
+	assertHeader(t, req, lmw.CityHeader, lmw.Unknown)
+	assertHeader(t, req, lmw.IPAddressHeader, ValidIPNoCity)
 
 	req = httptest.NewRequest(http.MethodGet, "http://localhost", nil)
 	req.RemoteAddr = "qwerty:9999"
 	instance.ServeHTTP(httptest.NewRecorder(), req)
-	assertHeader(t, req, mw.CountryCodeHeader, mw.Unknown)
-	assertHeader(t, req, mw.RegionCodeHeader, mw.Unknown)
-	assertHeader(t, req, mw.CityHeader, mw.Unknown)
-	assertHeader(t, req, mw.IPAddressHeader, "qwerty")
+	assertHeader(t, req, lmw.CountryCodeHeader, lmw.Unknown)
+	assertHeader(t, req, lmw.RegionCodeHeader, lmw.Unknown)
+	assertHeader(t, req, lmw.CityHeader, lmw.Unknown)
+	assertHeader(t, req, lmw.IPAddressHeader, "qwerty")
 }
 
 func TestGeoIPFromXForwardedFor(t *testing.T) {
@@ -139,29 +140,29 @@ func TestGeoIPFromXForwardedFor(t *testing.T) {
 	req.RemoteAddr = fmt.Sprintf("%s:9999", ValidIP)
 	req.Header.Set("X-Forwarded-For", ValidAlternateIP)
 	instance.ServeHTTP(httptest.NewRecorder(), req)
-	assertHeader(t, req, mw.CountryCodeHeader, "DE")
-	assertHeader(t, req, mw.RegionCodeHeader, "BY")
-	assertHeader(t, req, mw.CityHeader, "Munich")
-	assertHeader(t, req, mw.IPAddressHeader, ValidAlternateIP)
+	assertHeader(t, req, lmw.CountryCodeHeader, "DE")
+	assertHeader(t, req, lmw.RegionCodeHeader, "BY")
+	assertHeader(t, req, lmw.CityHeader, "Munich")
+	assertHeader(t, req, lmw.IPAddressHeader, ValidAlternateIP)
 
 	req = httptest.NewRequest(http.MethodGet, "http://localhost", nil)
 	req.RemoteAddr = fmt.Sprintf("%s:9999", ValidIP)
 	req.Header.Set("X-Forwarded-For", ValidAlternateIP+",188.193.88.100")
 	instance.ServeHTTP(httptest.NewRecorder(), req)
-	assertHeader(t, req, mw.CountryCodeHeader, "DE")
-	assertHeader(t, req, mw.CountryHeader, "Germany")
-	assertHeader(t, req, mw.RegionCodeHeader, "BY")
-	assertHeader(t, req, mw.CityHeader, "Munich")
-	assertHeader(t, req, mw.IPAddressHeader, ValidAlternateIP)
+	assertHeader(t, req, lmw.CountryCodeHeader, "DE")
+	assertHeader(t, req, lmw.CountryHeader, "Germany")
+	assertHeader(t, req, lmw.RegionCodeHeader, "BY")
+	assertHeader(t, req, lmw.CityHeader, "Munich")
+	assertHeader(t, req, lmw.IPAddressHeader, ValidAlternateIP)
 
 	req = httptest.NewRequest(http.MethodGet, "http://localhost", nil)
 	req.RemoteAddr = ValidIP + ":9999"
 	req.Header.Set("X-Forwarded-For", "qwerty")
 	instance.ServeHTTP(httptest.NewRecorder(), req)
-	assertHeader(t, req, mw.CountryHeader, mw.Unknown)
-	assertHeader(t, req, mw.RegionHeader, mw.Unknown)
-	assertHeader(t, req, mw.CityHeader, mw.Unknown)
-	assertHeader(t, req, mw.IPAddressHeader, "qwerty")
+	assertHeader(t, req, lmw.CountryHeader, lmw.Unknown)
+	assertHeader(t, req, lmw.RegionHeader, lmw.Unknown)
+	assertHeader(t, req, lmw.CityHeader, lmw.Unknown)
+	assertHeader(t, req, lmw.IPAddressHeader, "qwerty")
 }
 
 func TestGeoIPCountryDBFromRemoteAddr(t *testing.T) {
@@ -176,9 +177,9 @@ func TestGeoIPCountryDBFromRemoteAddr(t *testing.T) {
 	req.RemoteAddr = fmt.Sprintf("%s:9999", ValidIP)
 	instance.ServeHTTP(httptest.NewRecorder(), req)
 
-	assertHeader(t, req, mw.CountryCodeHeader, "DE")
-	assertHeader(t, req, mw.CountryHeader, "Germany")
-	assertHeader(t, req, mw.IPAddressHeader, ValidIP)
+	assertHeader(t, req, lmw.CountryCodeHeader, "DE")
+	assertHeader(t, req, lmw.CountryHeader, "Germany")
+	assertHeader(t, req, lmw.IPAddressHeader, ValidIP)
 }
 
 func assertHeader(t *testing.T, req *http.Request, key, expected string) {

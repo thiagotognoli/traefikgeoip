@@ -4,183 +4,108 @@ package traefikgeoip
 import (
 	"context"
 	"log"
-	"net"
 	"net/http"
-	"os"
-	"strings"
-)
 
-var (
-	lookupAsn     LookupGeoIPAsn
-	lookupCity    LookupGeoIPCity
-	lookupCountry LookupGeoIPCountry
+	lib "github.com/thiagotognoli/traefikgeoip/lib"
 )
 
 // ResetLookup reset lookup function.
 func ResetLookup() {
-	lookupAsn = nil
-	lookupCity = nil
-	lookupCountry = nil
-}
-
-// Config the plugin configuration.
-type Config struct {
-	CityDBPath                string `json:"cityDbPath,omitempty"`
-	AsnDBPath                 string `json:"asnDbPath,omitempty"`
-	CountryDBPath             string `json:"countryDbPath,omitempty"`
-	PreferXForwardedForHeader bool
+	// lookupAsn = nil
+	// lookupCity = nil
+	// lookupCountry = nil
 }
 
 // CreateConfig creates the default plugin configuration.
-func CreateConfig() *Config {
-	return &Config{
+func CreateConfig() *lib.Config {
+	return &lib.Config{
 		// CityDBPath: DefaultDBPath,
 	}
 }
 
-// TraefikGeoIP2 a traefik geoip2 plugin.
-type TraefikGeoIP2 struct {
-	next                      http.Handler
-	name                      string
-	preferXForwardedForHeader bool
+// New created a new TraefikGeoIP plugin.
+func New(_ context.Context, next http.Handler, cfg *lib.Config, name string) (http.Handler, error) {
+	lookupCity, lookupCountry, lookupAsn, err := factoryLookups(cfg, name)
+	if err != nil {
+		log.Printf("%s", err.Error())
+		return &lib.TraefikGeoIP{
+			Next:                      next,
+			Name:                      name,
+			PreferXForwardedForHeader: cfg.PreferXForwardedForHeader,
+		}, nil // err
+	}
+
+	switch {
+	case lookupCity != nil && lookupAsn != nil:
+		return &lib.TraefikGeoIPCityAsn{
+			Next:                      next,
+			Name:                      name,
+			PreferXForwardedForHeader: cfg.PreferXForwardedForHeader,
+			LookupAsn:                 lookupAsn,
+			LookupCity:                lookupCity,
+		}, nil
+	case lookupCity != nil:
+		return &lib.TraefikGeoIPCity{
+			Next:                      next,
+			Name:                      name,
+			PreferXForwardedForHeader: cfg.PreferXForwardedForHeader,
+			LookupCity:                lookupCity,
+		}, nil
+	case lookupCountry != nil && lookupAsn != nil:
+		return &lib.TraefikGeoIPCountryAsn{
+			Next:                      next,
+			Name:                      name,
+			PreferXForwardedForHeader: cfg.PreferXForwardedForHeader,
+			LookupAsn:                 lookupAsn,
+			LookupCountry:             lookupCountry,
+		}, nil
+	case lookupCountry != nil:
+		return &lib.TraefikGeoIPCountry{
+			Next:                      next,
+			Name:                      name,
+			PreferXForwardedForHeader: cfg.PreferXForwardedForHeader,
+			LookupCountry:             lookupCountry,
+		}, nil
+	case lookupAsn != nil:
+		return &lib.TraefikGeoIPAsn{
+			Next:                      next,
+			Name:                      name,
+			PreferXForwardedForHeader: cfg.PreferXForwardedForHeader,
+			LookupAsn:                 lookupAsn,
+		}, nil
+	default:
+		return &lib.TraefikGeoIPNotFound{
+			Next:                      next,
+			Name:                      name,
+			PreferXForwardedForHeader: cfg.PreferXForwardedForHeader,
+		}, nil // fmt.Errorf("none GeoIP DB configured")
+	}
 }
 
-// New created a new TraefikGeoIP plugin.
-func New(_ context.Context, next http.Handler, cfg *Config, name string) (http.Handler, error) {
+func factoryLookups(cfg *lib.Config, name string) (lib.LookupGeoIPCity, lib.LookupGeoIPCountry, lib.LookupGeoIPAsn, error) {
+	var lookupCity lib.LookupGeoIPCity
+	var lookupCountry lib.LookupGeoIPCountry
+	var lookupAsn lib.LookupGeoIPAsn
+
 	if cfg.CityDBPath != "" {
-		if _, err := os.Stat(cfg.CityDBPath); err != nil {
-			log.Printf("[geoip2] City DB not found: db=%s, name=%s, err=%v", cfg.CityDBPath, name, err)
-			return &TraefikGeoIP2{
-				next:                      next,
-				name:                      name,
-				preferXForwardedForHeader: cfg.PreferXForwardedForHeader,
-			}, nil
+		var err error
+		lookupCity, err = lib.NewLookupCity(cfg.CityDBPath, name)
+		if err != nil {
+			return nil, nil, nil, err
 		}
-		lookupCity, _ = NewLookupCity(lookupCity, cfg.CityDBPath, name)
 	} else if cfg.CountryDBPath != "" {
-		if _, err := os.Stat(cfg.CountryDBPath); err != nil {
-			log.Printf("[geoip2] Country DB not found: db=%s, name=%s, err=%v", cfg.CountryDBPath, name, err)
-			return &TraefikGeoIP2{
-				next:                      next,
-				name:                      name,
-				preferXForwardedForHeader: cfg.PreferXForwardedForHeader,
-			}, nil
+		var err error
+		lookupCountry, err = lib.NewLookupCountry(cfg.CountryDBPath, name)
+		if err != nil {
+			return nil, nil, nil, err
 		}
-		lookupCountry, _ = NewLookupCountry(lookupCountry, cfg.CountryDBPath, name)
 	}
 	if cfg.AsnDBPath != "" {
-		if _, err := os.Stat(cfg.AsnDBPath); err != nil {
-			log.Printf("[geoip2] ASN DB not found: db=%s, name=%s, err=%v", cfg.AsnDBPath, name, err)
-			return &TraefikGeoIP2{
-				next:                      next,
-				name:                      name,
-				preferXForwardedForHeader: cfg.PreferXForwardedForHeader,
-			}, nil
-		}
-		lookupAsn, _ = NewLookupAsn(lookupAsn, cfg.AsnDBPath, name)
-	}
-
-	return &TraefikGeoIP2{
-		next:                      next,
-		name:                      name,
-		preferXForwardedForHeader: cfg.PreferXForwardedForHeader,
-	}, nil
-}
-
-func (mw *TraefikGeoIP2) ServeHTTP(reqWr http.ResponseWriter, req *http.Request) {
-	ipStr := getClientIP(req, mw.preferXForwardedForHeader)
-	req.Header.Set(IPAddressHeader, ipStr)
-	switch {
-	case lookupCity != nil:
-		res, err := lookupCity(net.ParseIP(ipStr))
+		var err error
+		lookupAsn, err = lib.NewLookupAsn(cfg.AsnDBPath, name)
 		if err != nil {
-			log.Printf("[geoip2] Unable to find City: ip=%s, err=%v", ipStr, err)
-			req.Header.Set(CountryHeader, Unknown)
-			req.Header.Set(CountryCodeHeader, Unknown)
-			req.Header.Set(RegionHeader, Unknown)
-			req.Header.Set(RegionCodeHeader, Unknown)
-			req.Header.Set(CityHeader, Unknown)
-			req.Header.Set(LatitudeHeader, Unknown)
-			req.Header.Set(LongitudeHeader, Unknown)
-			req.Header.Set(AccuracyRadiusHeader, Unknown)
-			req.Header.Set(GeohashHeader, Unknown)
-			req.Header.Set(PostalCodeHeader, Unknown)
-		} else {
-			req.Header.Set(CountryHeader, res.country)
-			req.Header.Set(CountryCodeHeader, res.countryCode)
-			req.Header.Set(RegionHeader, res.region)
-			req.Header.Set(RegionCodeHeader, res.regionCode)
-			req.Header.Set(CityHeader, res.city)
-			req.Header.Set(LatitudeHeader, res.latitude)
-			req.Header.Set(LongitudeHeader, res.longitude)
-			req.Header.Set(AccuracyRadiusHeader, res.accuracyRadius)
-			req.Header.Set(GeohashHeader, res.geohash)
-			req.Header.Set(PostalCodeHeader, res.postalCode)
-		}
-		if lookupAsn != nil {
-			res, err := lookupAsn(net.ParseIP(ipStr))
-			if err != nil {
-				log.Printf("[geoip2] Unable to find ASN: ip=%s, err=%v", ipStr, err)
-				req.Header.Set(ASNSystemNumberHeader, res.number)
-				req.Header.Set(ASNOrganizationHeader, res.organization)
-			} else {
-				req.Header.Set(ASNSystemNumberHeader, Unknown)
-				req.Header.Set(ASNOrganizationHeader, Unknown)
-			}
-		}
-	case lookupCountry != nil:
-		res, err := lookupCountry(net.ParseIP(ipStr))
-		if err != nil {
-			log.Printf("[geoip2] Unable to find Country: ip=%s, err=%v", ipStr, err)
-			req.Header.Set(CountryHeader, Unknown)
-			req.Header.Set(CountryCodeHeader, Unknown)
-		} else {
-			req.Header.Set(CountryHeader, res.country)
-			req.Header.Set(CountryCodeHeader, res.countryCode)
-		}
-	case lookupAsn != nil:
-		res, err := lookupAsn(net.ParseIP(ipStr))
-		if err != nil {
-			log.Printf("[geoip2] Unable to find ASN: ip=%s, err=%v", ipStr, err)
-			req.Header.Set(ASNSystemNumberHeader, res.number)
-			req.Header.Set(ASNOrganizationHeader, res.organization)
-		} else {
-			req.Header.Set(ASNSystemNumberHeader, Unknown)
-			req.Header.Set(ASNOrganizationHeader, Unknown)
-		}
-	default:
-		req.Header.Set(CountryHeader, Unknown)
-		req.Header.Set(CountryCodeHeader, Unknown)
-		req.Header.Set(RegionHeader, Unknown)
-		req.Header.Set(RegionCodeHeader, Unknown)
-		req.Header.Set(CityHeader, Unknown)
-		req.Header.Set(LatitudeHeader, Unknown)
-		req.Header.Set(LongitudeHeader, Unknown)
-		req.Header.Set(AccuracyRadiusHeader, Unknown)
-		req.Header.Set(GeohashHeader, Unknown)
-		req.Header.Set(PostalCodeHeader, Unknown)
-		req.Header.Set(ASNSystemNumberHeader, Unknown)
-		req.Header.Set(ASNOrganizationHeader, Unknown)
-	}
-
-	mw.next.ServeHTTP(reqWr, req)
-}
-
-func getClientIP(req *http.Request, preferXForwardedForHeader bool) string {
-	if preferXForwardedForHeader {
-		// Check X-Forwarded-For header first
-		forwardedFor := req.Header.Get("X-Forwarded-For")
-		if forwardedFor != "" {
-			ips := strings.Split(forwardedFor, ",")
-			return strings.TrimSpace(ips[0])
+			return nil, nil, nil, err
 		}
 	}
-
-	// If X-Forwarded-For is not present or retrieval is not enabled, fallback to RemoteAddr
-	remoteAddr := req.RemoteAddr
-	tmp, _, err := net.SplitHostPort(remoteAddr)
-	if err == nil {
-		remoteAddr = tmp
-	}
-	return remoteAddr
+	return lookupCity, lookupCountry, lookupAsn, nil
 }

@@ -1,6 +1,33 @@
-package traefikgeoip
+// Package lib package contains traefikgeoip implementations.
+package lib
 
-// Unknown constant for undefined data.
+import "net/http"
+
+// TraefikGeoIPBase is a base middleware that looks client IP address from the GeoIP2 database.
+type TraefikGeoIPBase struct {
+	Next                      http.Handler
+	Name                      string
+	PreferXForwardedForHeader bool
+}
+
+// TraefikGeoIPNotFound is a middleware that do nothing.
+type TraefikGeoIPNotFound struct {
+	Next                      http.Handler
+	Name                      string
+	PreferXForwardedForHeader bool
+}
+
+func (mw *TraefikGeoIPNotFound) ServeHTTP(reqWr http.ResponseWriter, req *http.Request) {
+	mw.Next.ServeHTTP(reqWr, req)
+}
+
+// Config the plugin configuration.
+type Config struct {
+	CityDBPath                string `json:"cityDbPath,omitempty"`
+	AsnDBPath                 string `json:"asnDbPath,omitempty"`
+	CountryDBPath             string `json:"countryDbPath,omitempty"`
+	PreferXForwardedForHeader bool
+}
 
 // DefaultDBPath default GeoIP2 database path.
 const DefaultDBPath = "GeoLite2-City.mmdb"

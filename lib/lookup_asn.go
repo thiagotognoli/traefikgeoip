@@ -1,9 +1,10 @@
-package traefikgeoip
+package lib
 
 import (
 	"fmt"
 	"log"
 	"net"
+	"os"
 	"strconv"
 
 	"github.com/thiagotognoli/traefikgeoip/geoip2"
@@ -34,8 +35,12 @@ func CreateAsnDBLookup(rdr *geoip2.ASNReader) LookupGeoIPAsn {
 }
 
 // NewLookupAsn Create a new Lookup.
-func NewLookupAsn(lookupAsn LookupGeoIPAsn, dbPath, name string) (LookupGeoIPAsn, error) {
-	// if lookupAsn == nil {
+func NewLookupAsn(dbPath, name string) (LookupGeoIPAsn, error) {
+	if _, err := os.Stat(dbPath); err != nil {
+		return nil, fmt.Errorf("[geoip2] ASN DB not found: db=%s, name=%s, err=%w", dbPath, name, err)
+	}
+	var lookupAsn LookupGeoIPAsn
+
 	rdr, err := geoip2.NewASNReaderFromFile(dbPath)
 	if err != nil {
 		log.Printf("[geoip2] ASN lookup DB is not initialized: db=%s, name=%s, err=%v", dbPath, name, err)

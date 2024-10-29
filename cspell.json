@@ -9,7 +9,8 @@
     "xvzf",
     "golangci",
     "yaegi",
-    "Geohash"
+    "Geohash",
+    "IPASN"
   ],
   "flagWords": [],
   "language": "en",

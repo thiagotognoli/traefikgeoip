@@ -1,9 +1,10 @@
-package traefikgeoip
+package lib
 
 import (
 	"fmt"
 	"log"
 	"net"
+	"os"
 	"strconv"
 
 	"github.com/thiagotognoli/traefikgeoip/geoip2"
@@ -62,8 +63,12 @@ func CreateCityDBLookup(rdr *geoip2.CityReader) LookupGeoIPCity {
 }
 
 // NewLookupCity Create a new Lookup.
-func NewLookupCity(lookupCity LookupGeoIPCity, dbPath, name string) (LookupGeoIPCity, error) {
-	// if lookupCity == nil {
+func NewLookupCity(dbPath, name string) (LookupGeoIPCity, error) {
+	if _, err := os.Stat(dbPath); err != nil {
+		return nil, fmt.Errorf("[geoip2] City DB not found: db=%s, name=%s, err=%w", dbPath, name, err)
+	}
+	var lookupCity LookupGeoIPCity
+
 	rdr, err := geoip2.NewCityReaderFromFile(dbPath)
 	if err != nil {
 		log.Printf("[geoip2] City lookup DB is not initialized: db=%s, name=%s, err=%v", dbPath, name, err)

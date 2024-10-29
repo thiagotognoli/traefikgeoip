@@ -21,7 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-package traefikgeoip
+package lib
 
 // base32Encode bits of 64-bit word into a string.
 func base32Encode(x uint64) string {
