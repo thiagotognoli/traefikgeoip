@@ -36,7 +36,7 @@ func readControl(buffer []byte, offset uint) (byte, uint, uint, error) {
 	return dataType, size, newOffset, nil
 }
 
-func readPointer(buffer []byte, size uint, offset uint) (uint, uint, error) {
+func readPointer(buffer []byte, size, offset uint) (uint, uint, error) {
 	pointerSize := ((size >> 3) & 0x3) + 1
 	newOffset := offset + pointerSize
 	if newOffset > uint(len(buffer)) {
@@ -223,7 +223,7 @@ func readStringMap(buffer []byte, offset uint) (map[string]string, uint, error) 
 	}
 }
 
-func readStringMapMap(buffer []byte, mapSize uint, offset uint) (map[string]string, uint, error) {
+func readStringMapMap(buffer []byte, mapSize, offset uint) (map[string]string, uint, error) {
 	var key []byte
 	var err error
 	var dataType byte
@@ -294,7 +294,7 @@ func readMapKey(buffer []byte, offset uint) ([]byte, uint, error) {
 	return buffer[offset:newOffset], newOffset, nil
 }
 
-func readStringSlice(buffer []byte, sliceSize uint, offset uint) ([]string, uint, error) {
+func readStringSlice(buffer []byte, sliceSize, offset uint) ([]string, uint, error) {
 	var err error
 	var value string
 	result := make([]string, sliceSize)

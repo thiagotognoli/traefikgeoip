@@ -2,13 +2,6 @@
 @default:
   just --list
 
-prepare:
-  #!/usr/bin/env bash
-  cd data
-  mkdir -p tmp
-  go run main.go -i GeoLite2-City.json -o tmp/GeoLite2-City.mmdb -t GeoLite2-City
-  go run main.go -i GeoLite2-ASN.json -o tmp/GeoLite2-ASN.mmdb -t GeoLite2-ASN
-  go run main.go -i GeoLite2-Country.json -o tmp/GeoLite2-Country.mmdb -t GeoLite2-Country
 
 @_prepare:
   #!/usr/bin/env bash
@@ -17,6 +10,9 @@ prepare:
   go run main.go -i GeoLite2-City.json -o tmp/GeoLite2-City.mmdb -t GeoLite2-City
   go run main.go -i GeoLite2-ASN.json -o tmp/GeoLite2-ASN.mmdb -t GeoLite2-ASN
   go run main.go -i GeoLite2-Country.json -o tmp/GeoLite2-Country.mmdb -t GeoLite2-Country
+
+format:
+  gofumpt -w -extra .
 
 # lint go files
 lint:
@@ -46,10 +42,11 @@ test-yaegi: && _clean-yaegi
 #  export GOFLAGS=-mod=vendor
 
 # lint and test
-test: _prepare lint test-go test-yaegi
+test: _prepare format lint test-go test-yaegi
 
 clean:
   rm -rf *.mmdb
+  rm -rf data/tmp
 
 vendor:
   go mod vendor

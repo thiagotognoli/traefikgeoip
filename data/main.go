@@ -1,6 +1,6 @@
 package main
 
-//from https://github.com/oladush/json-to-mmdb/blob/main/main.go
+// from https://github.com/oladush/json-to-mmdb/blob/main/main.go
 
 import (
 	"bufio"
@@ -17,8 +17,10 @@ import (
 	"github.com/maxmind/mmdbwriter/mmdbtype"
 )
 
-const FAIL = "\033[91m"
-const ENDC = "\033[0m"
+const (
+	FAIL = "\033[91m"
+	ENDC = "\033[0m"
+)
 
 // returns length of file
 func lineCount(filename string) (int64, error) {
@@ -105,14 +107,12 @@ func parseToMap(record *map[string]interface{}) mmdbtype.Map {
 			for _, v := range val {
 				if value, ok := v.(string); ok {
 					arr = append(arr, mmdbtype.String(value))
-
 				} else if value, ok := v.(float64); ok {
 					if isInteger(value) {
 						arr = append(arr, mmdbtype.Uint32(value))
 					} else {
 						arr = append(arr, mmdbtype.Float64(value))
 					}
-
 				} else if value, ok := v.(map[string]interface{}); ok {
 					arr = append(arr, parseToMap(&value))
 				}
@@ -130,9 +130,8 @@ func addRecord(prefix string, record *map[string]interface{}, tree *mmdbwriter.T
 	// get prefix like string
 	// prefix := getPrefix(record)
 
-	//try parse prefix
+	// try parse prefix
 	_, prefix_p, err := net.ParseCIDR(prefix)
-
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -159,25 +158,31 @@ func main() {
 	flag.StringVar(&mmdb_type, "t", "", "mmdb type")
 
 	flag.Usage = func() {
-		fmt.Println("┌────────────────────────────────────────────────────────────────────────────────┐")
-		fmt.Println("│   /\\__/\\    jsonToMMDB                                                        │")
-		fmt.Println("│  ( ⊙ ‿ ⊙)    simple script for convert json to mmdb                            │")
+		fmt.Println("┌───────────────────────────────────────────────────────────────────────────────────┐")
+		fmt.Println("│   /\\__/\\    jsonToMMDB                                                            │")
+		fmt.Println("│  ( ⊙ ‿ ⊙)    simple script for convert json to mmdb                               │")
 		fmt.Println("│   (｡  ｡)     usage: ./jsonToMMDB -i input.json -o output.mmdb -t GeoLite2-Country │")
-		fmt.Println("└─────────────────────────────────────────────────────────────────────────────────┘")
+		fmt.Println("└───────────────────────────────────────────────────────────────────────────────────┘")
 		fmt.Println("────────────────────────────────────┐")
 		flag.PrintDefaults()
-		fmt.Println("──────────────────────────────────────────────────────────────────────────────────────┐")
+		fmt.Println("──────────────────────────────────────────────────────────────────────────────────────────────┐")
 		fmt.Println("Input example:")
-		fmt.Println("{ \"10.0.0.0/16\": { \"country\": {\"geoname_id\": 666, \"names\": {\"en\": \"Zalibobastan\"}}}}")
-		fmt.Println("{ \"10.0.1.0/24\": { \"country\": {\"geoname_id\": 333, \"names\": {\"en\": \"Kyrgyzstan\"}}}}")
-		fmt.Println("...")
+		fmt.Println("{")
+		fmt.Println("\t\"10.0.0.0/16\": { \"country\": {\"geoname_id\": 666, \"names\": {\"en\": \"Zalibobastan\"}}},")
+		fmt.Println("\t\"10.0.1.0/24\": { \"country\": {\"geoname_id\": 333, \"names\": {\"en\": \"Kyrgyzstan\"}}}")
+		fmt.Println("}")
 	}
 
 	flag.Parse()
 
+	if input_json == "" || output_mmdb == "" || mmdb_type == "" {
+		flag.Usage()
+		return
+	}
+
 	file, err := os.Open(input_json)
 	if err != nil {
-		log.Fatalf("Erro ao abrir o arquivo: %v", err)
+		log.Fatalf("Error to open file: %v", err)
 	}
 	defer file.Close() // Certifique-se de fechar o arquivo após a leitura
 
@@ -206,5 +211,4 @@ func main() {
 	debug.FreeOSMemory()
 	fmt.Println("Saving...")
 	writeMMDB(output_mmdb, writer)
-
 }

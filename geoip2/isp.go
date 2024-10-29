@@ -2,7 +2,7 @@ package geoip2
 
 import "errors"
 
-func readISPMap(result *ISP, buffer []byte, mapSize uint, offset uint) (uint, error) {
+func readISPMap(result *ISP, buffer []byte, mapSize, offset uint) (uint, error) {
 	var key []byte
 	var err error
 	for i := uint(0); i < mapSize; i++ {

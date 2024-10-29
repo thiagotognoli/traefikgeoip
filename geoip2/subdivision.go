@@ -35,7 +35,7 @@ func readSubdivisions(buffer []byte, offset uint) ([]Subdivision, uint, error) {
 	}
 }
 
-func readSubdivisionsSlice(buffer []byte, subdivisionsSize uint, offset uint) ([]Subdivision, uint, error) {
+func readSubdivisionsSlice(buffer []byte, subdivisionsSize, offset uint) ([]Subdivision, uint, error) {
 	var err error
 	subdivisions := make([]Subdivision, subdivisionsSize)
 	for i := uint(0); i < subdivisionsSize; i++ {
@@ -77,7 +77,7 @@ func readSubdivision(subdivision *Subdivision, buffer []byte, offset uint) (uint
 	}
 }
 
-func readSubdivisionMap(subdivision *Subdivision, buffer []byte, mapSize uint, offset uint) (uint, error) {
+func readSubdivisionMap(subdivision *Subdivision, buffer []byte, mapSize, offset uint) (uint, error) {
 	var key []byte
 	var err error
 	for i := uint(0); i < mapSize; i++ {
