@@ -24,6 +24,8 @@ type GeoIPCityResult struct {
 	postalCode     string
 }
 
+const kmToMeters = 1000
+
 // LookupGeoIPCity LookupGeoIP.
 type LookupGeoIPCity func(ip net.IP) (*GeoIPCityResult, error)
 
@@ -43,7 +45,7 @@ func CreateCityDBLookup(rdr *geoip2.CityReader) LookupGeoIPCity {
 			postalCode:     rec.Postal.Code,
 			latitude:       strconv.FormatFloat(rec.Location.Latitude, 'f', -1, 64),
 			longitude:      strconv.FormatFloat(rec.Location.Longitude, 'f', -1, 64),
-			accuracyRadius: strconv.Itoa(int(rec.Location.AccuracyRadius)),
+			accuracyRadius: strconv.Itoa(int(rec.Location.AccuracyRadius) * kmToMeters),
 			geohash:        EncodeGeoHash(rec.Location.Latitude, rec.Location.Longitude),
 		}
 		if country, ok := rec.Country.Names["en"]; ok {

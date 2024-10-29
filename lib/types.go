@@ -5,20 +5,28 @@ import "net/http"
 
 // TraefikGeoIPBase is a base middleware that looks client IP address from the GeoIP2 database.
 type TraefikGeoIPBase struct {
-	Next                      http.Handler
-	Name                      string
-	PreferXForwardedForHeader bool
+	Next    http.Handler
+	Name    string
+	Options Options
 }
 
 // TraefikGeoIPNotFound is a middleware that do nothing.
 type TraefikGeoIPNotFound struct {
-	Next                      http.Handler
-	Name                      string
-	PreferXForwardedForHeader bool
+	Next    http.Handler
+	Name    string
+	Options Options
 }
 
 func (mw *TraefikGeoIPNotFound) ServeHTTP(reqWr http.ResponseWriter, req *http.Request) {
 	mw.Next.ServeHTTP(reqWr, req)
+}
+
+// Options the plugin options.
+type Options struct {
+	PreferXForwardedForHeader bool
+	IPHeader                  string `json:"ipHeader,omitempty"`
+	FailInError               bool   `json:"failInError,omitempty"`
+	Debug                     bool   `json:"debug,omitempty"`
 }
 
 // Config the plugin configuration.
@@ -27,6 +35,19 @@ type Config struct {
 	AsnDBPath                 string `json:"asnDbPath,omitempty"`
 	CountryDBPath             string `json:"countryDbPath,omitempty"`
 	PreferXForwardedForHeader bool
+	IPHeader                  string `json:"ipHeader,omitempty"`
+	FailInError               bool   `json:"failInError,omitempty"`
+	Debug                     bool   `json:"debug,omitempty"`
+}
+
+// ConfigToOptions converts the plugin configuration to plugin options.
+func ConfigToOptions(config *Config) Options {
+	return Options{
+		PreferXForwardedForHeader: config.PreferXForwardedForHeader,
+		IPHeader:                  config.IPHeader,
+		FailInError:               config.FailInError,
+		Debug:                     config.Debug,
+	}
 }
 
 // DefaultDBPath default GeoIP2 database path.

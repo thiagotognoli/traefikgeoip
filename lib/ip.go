@@ -6,8 +6,10 @@ import (
 	"strings"
 )
 
-func getClientIP(req *http.Request, preferXForwardedForHeader bool) string {
-	if preferXForwardedForHeader {
+func getClientIP(req *http.Request, options Options) string {
+	if options.IPHeader != "" {
+		return req.Header.Get(options.IPHeader)
+	} else if options.PreferXForwardedForHeader {
 		// Check X-Forwarded-For header first
 		forwardedFor := req.Header.Get("X-Forwarded-For")
 		if forwardedFor != "" {

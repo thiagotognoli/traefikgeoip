@@ -5,6 +5,7 @@ import (
 	"context"
 	"log"
 	"net/http"
+	"os"
 
 	lib "github.com/thiagotognoli/traefikgeoip/lib"
 )
@@ -27,57 +28,63 @@ func CreateConfig() *lib.Config {
 func New(_ context.Context, next http.Handler, cfg *lib.Config, name string) (http.Handler, error) {
 	lookupCity, lookupCountry, lookupAsn, err := factoryLookups(cfg, name)
 	if err != nil {
-		log.Printf("%s", err.Error())
+		if cfg.FailInError {
+			log.Fatalf("%s", err.Error())
+			// return nil, err
+		}
+
+		stderrLogger := log.New(os.Stderr, "ERROR: ", log.LstdFlags|log.Lshortfile)
+		stderrLogger.Printf("%s. Only processing IpHeader.", err.Error())
 		return &lib.TraefikGeoIP{
-			Next:                      next,
-			Name:                      name,
-			PreferXForwardedForHeader: cfg.PreferXForwardedForHeader,
+			Next:    next,
+			Name:    name,
+			Options: lib.ConfigToOptions(cfg),
 		}, nil // err
 	}
 
 	switch {
 	case lookupCity != nil && lookupAsn != nil:
 		return &lib.TraefikGeoIPCityAsn{
-			Next:                      next,
-			Name:                      name,
-			PreferXForwardedForHeader: cfg.PreferXForwardedForHeader,
-			LookupAsn:                 lookupAsn,
-			LookupCity:                lookupCity,
+			Next:       next,
+			Name:       name,
+			Options:    lib.ConfigToOptions(cfg),
+			LookupAsn:  lookupAsn,
+			LookupCity: lookupCity,
 		}, nil
 	case lookupCity != nil:
 		return &lib.TraefikGeoIPCity{
-			Next:                      next,
-			Name:                      name,
-			PreferXForwardedForHeader: cfg.PreferXForwardedForHeader,
-			LookupCity:                lookupCity,
+			Next:       next,
+			Name:       name,
+			Options:    lib.ConfigToOptions(cfg),
+			LookupCity: lookupCity,
 		}, nil
 	case lookupCountry != nil && lookupAsn != nil:
 		return &lib.TraefikGeoIPCountryAsn{
-			Next:                      next,
-			Name:                      name,
-			PreferXForwardedForHeader: cfg.PreferXForwardedForHeader,
-			LookupAsn:                 lookupAsn,
-			LookupCountry:             lookupCountry,
+			Next:          next,
+			Name:          name,
+			Options:       lib.ConfigToOptions(cfg),
+			LookupAsn:     lookupAsn,
+			LookupCountry: lookupCountry,
 		}, nil
 	case lookupCountry != nil:
 		return &lib.TraefikGeoIPCountry{
-			Next:                      next,
-			Name:                      name,
-			PreferXForwardedForHeader: cfg.PreferXForwardedForHeader,
-			LookupCountry:             lookupCountry,
+			Next:          next,
+			Name:          name,
+			Options:       lib.ConfigToOptions(cfg),
+			LookupCountry: lookupCountry,
 		}, nil
 	case lookupAsn != nil:
 		return &lib.TraefikGeoIPAsn{
-			Next:                      next,
-			Name:                      name,
-			PreferXForwardedForHeader: cfg.PreferXForwardedForHeader,
-			LookupAsn:                 lookupAsn,
+			Next:      next,
+			Name:      name,
+			Options:   lib.ConfigToOptions(cfg),
+			LookupAsn: lookupAsn,
 		}, nil
 	default:
 		return &lib.TraefikGeoIPNotFound{
-			Next:                      next,
-			Name:                      name,
-			PreferXForwardedForHeader: cfg.PreferXForwardedForHeader,
+			Next:    next,
+			Name:    name,
+			Options: lib.ConfigToOptions(cfg),
 		}, nil // fmt.Errorf("none GeoIP DB configured")
 	}
 }

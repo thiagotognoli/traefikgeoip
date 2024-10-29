@@ -1,12 +1,17 @@
-displayName: GeoIP
-
-summary: 'Getting data from GeoIP databases and pass it downstream via HTTP request headers.'
-
 type: middleware
-
 import: github.com/thiagotognoli/traefikgeoip
 
+name: traefikgeoip
+displayName: GeoIP
+summary: 'Getting data from GeoIP databases and pass it downstream via HTTP request headers.'
+#iconPath: media/sfTraefikIcon.png
+
+
 testData:
-  dbPath: 'GeoLite2-Country.mmdb'
-  dbAsnPath: 'GeoLite2-ASN.mmdb'
+  cityDbPath: 'GeoLite2-Country.mmdb'
+  asnDbPath: 'GeoLite2-ASN.mmdb'
+  countryDbPath: 'GeoLite2-Country.mmdb'
   preferXForwardedForHeader: false
+  ipHeader: 'X-IP'
+  failInError: true
+  debug: false

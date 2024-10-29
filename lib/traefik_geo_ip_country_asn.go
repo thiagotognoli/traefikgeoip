@@ -8,19 +8,21 @@ import (
 
 // TraefikGeoIPCountryAsn is a middleware that looks up the city of the client IP address from the GeoIP2 database.
 type TraefikGeoIPCountryAsn struct {
-	Next                      http.Handler
-	Name                      string
-	PreferXForwardedForHeader bool
-	LookupAsn                 LookupGeoIPAsn
-	LookupCountry             LookupGeoIPCountry
+	Next          http.Handler
+	Name          string
+	Options       Options
+	LookupAsn     LookupGeoIPAsn
+	LookupCountry LookupGeoIPCountry
 }
 
 func (mw *TraefikGeoIPCountryAsn) ServeHTTP(reqWr http.ResponseWriter, req *http.Request) {
-	ipStr := getClientIP(req, mw.PreferXForwardedForHeader)
+	ipStr := getClientIP(req, mw.Options)
 	req.Header.Set(IPAddressHeader, ipStr)
 	res, err := mw.LookupCountry(net.ParseIP(ipStr))
 	if err != nil {
-		log.Printf("[geoip2] Unable to find Country: ip=%s, err=%v", ipStr, err)
+		if mw.Options.Debug {
+			log.Printf("[geoip2] Unable to find Country: ip=%s, err=%v", ipStr, err)
+		}
 		req.Header.Set(CountryHeader, Unknown)
 		req.Header.Set(CountryCodeHeader, Unknown)
 	} else {
@@ -29,7 +31,9 @@ func (mw *TraefikGeoIPCountryAsn) ServeHTTP(reqWr http.ResponseWriter, req *http
 	}
 	resAsn, err := mw.LookupAsn(net.ParseIP(ipStr))
 	if err != nil {
-		log.Printf("[geoip2] Unable to find ASN: ip=%s, err=%v", ipStr, err)
+		if mw.Options.Debug {
+			log.Printf("[geoip2] Unable to find ASN: ip=%s, err=%v", ipStr, err)
+		}
 		req.Header.Set(ASNSystemNumberHeader, Unknown)
 		req.Header.Set(ASNOrganizationHeader, Unknown)
 	} else {

@@ -8,18 +8,20 @@ import (
 
 // TraefikGeoIPCity is a middleware that looks up the city of the client IP address from the GeoIP2 database.
 type TraefikGeoIPCity struct {
-	Next                      http.Handler
-	Name                      string
-	PreferXForwardedForHeader bool
-	LookupCity                LookupGeoIPCity
+	Next       http.Handler
+	Name       string
+	Options    Options
+	LookupCity LookupGeoIPCity
 }
 
 func (mw *TraefikGeoIPCity) ServeHTTP(reqWr http.ResponseWriter, req *http.Request) {
-	ipStr := getClientIP(req, mw.PreferXForwardedForHeader)
+	ipStr := getClientIP(req, mw.Options)
 	req.Header.Set(IPAddressHeader, ipStr)
 	res, err := mw.LookupCity(net.ParseIP(ipStr))
 	if err != nil {
-		log.Printf("[geoip2] Unable to find City: ip=%s, err=%v", ipStr, err)
+		if mw.Options.Debug {
+			log.Printf("[geoip2] Unable to find City: ip=%s, err=%v", ipStr, err)
+		}
 		req.Header.Set(CountryHeader, Unknown)
 		req.Header.Set(CountryCodeHeader, Unknown)
 		req.Header.Set(RegionHeader, Unknown)
