@@ -43,7 +43,7 @@ func readCountryMap(country *Country, buffer []byte, mapSize, offset uint) (uint
 		if err != nil {
 			return 0, err
 		}
-		switch b2s(key) {
+		switch bytesToString(key) {
 		case "geoname_id":
 			country.GeoNameID, offset, err = readUInt32(buffer, offset)
 			if err != nil {

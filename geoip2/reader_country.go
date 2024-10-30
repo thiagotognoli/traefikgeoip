@@ -30,7 +30,7 @@ func (r *CountryReader) Lookup(ip net.IP) (*CountryResult, error) {
 		if err != nil {
 			return nil, err
 		}
-		switch b2s(key) {
+		switch bytesToString(key) {
 		case "continent":
 			offset, err = readContinent(&result.Continent, r.decoderBuffer, offset)
 			if err != nil {

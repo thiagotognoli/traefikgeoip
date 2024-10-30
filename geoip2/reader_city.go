@@ -30,7 +30,7 @@ func (r *CityReader) Lookup(ip net.IP) (*CityResult, error) {
 		if err != nil {
 			return nil, err
 		}
-		switch b2s(key) {
+		switch bytesToString(key) {
 		case "city":
 			offset, err = readCity(&result.City, r.decoderBuffer, offset)
 			if err != nil {

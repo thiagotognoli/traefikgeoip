@@ -182,6 +182,30 @@ func TestGeoIPCountryDBFromRemoteAddr(t *testing.T) {
 	assertHeader(t, req, lmw.IPAddressHeader, ValidIP)
 }
 
+// func TestGeoIpCityWithSpecialCharacters(t *testing.T) {
+// 	mwCfg := mw.CreateConfig()
+// 	mwCfg.CityDBPath = "data/tmp/GeoLite2-City.mmdb"
+
+// 	next := http.HandlerFunc(func(_ http.ResponseWriter, _ *http.Request) {})
+// 	mw.ResetLookup()
+// 	instance, _ := mw.New(context.TODO(), next, mwCfg, "traefik-geoip")
+
+// 	req := httptest.NewRequest(http.MethodGet, "http://localhost", nil)
+// 	req.RemoteAddr = fmt.Sprintf("%s:9999", "179.96.134.192")
+// 	instance.ServeHTTP(httptest.NewRecorder(), req)
+
+// 	assertHeader(t, req, lmw.CountryCodeHeader, "BR")
+// 	assertHeader(t, req, lmw.CountryHeader, "Brazil")
+// 	assertHeader(t, req, lmw.CityHeader, "Marília")
+// 	city := req.Header.Get(lmw.CityHeader)
+// 	if utf8.ValidString(city) {
+// 		log.Printf("City is valid UTF-8 %s", city)
+// 	} else {
+// 		log.Printf("City is NOT valid UTF-8 %s", city)
+// 	}
+// 	assertHeader(t, req, lmw.IPAddressHeader, "179.96.134.192")
+// }
+
 func assertHeader(t *testing.T, req *http.Request, key, expected string) {
 	t.Helper()
 	if req.Header.Get(key) != expected {

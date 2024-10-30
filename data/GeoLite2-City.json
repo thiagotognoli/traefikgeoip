@@ -1,4 +1,83 @@
 {
+  "179.96.134.192/19": {
+    "city": {
+      "geoname_id": 3457692,
+      "names": {
+        "de": "Marília",
+        "en": "Marília",
+        "es": "Marília",
+        "fr": "Marília",
+        "pt-BR": "Marília",
+        "ru": "Марилья"
+      }
+    },
+    "continent": {
+      "code": "SA",
+      "geoname_id": 6255150,
+      "names": {
+        "de": "Südamerika",
+        "en": "South America",
+        "es": "Sudamérica",
+        "fr": "Amérique du Sud",
+        "ja": "南アメリカ",
+        "pt-BR": "América do Sul",
+        "ru": "Южная Америка",
+        "zh-CN": "南美洲"
+      }
+    },
+    "country": {
+      "geoname_id": 3469034,
+      "iso_code": "BR",
+      "names": {
+        "de": "Brasilien",
+        "en": "Brazil",
+        "es": "Brasil",
+        "fr": "Brésil",
+        "ja": "ブラジル連邦共和国",
+        "pt-BR": "Brasil",
+        "ru": "Бразилия",
+        "zh-CN": "巴西"
+      }
+    },
+    "location": {
+      "accuracy_radius": 20,
+      "latitude": -22.2337,
+      "longitude": -49.9556,
+      "time_zone": "America/Sao_Paulo"
+    },
+    "postal": {
+      "code": "17503"
+    },
+    "registered_country": {
+      "geoname_id": 3469034,
+      "iso_code": "BR",
+      "names": {
+        "de": "Brasilien",
+        "en": "Brazil",
+        "es": "Brasil",
+        "fr": "Brésil",
+        "ja": "ブラジル連邦共和国",
+        "pt-BR": "Brasil",
+        "ru": "Бразилия",
+        "zh-CN": "巴西"
+      }
+    },
+    "subdivisions": [
+      {
+        "geoname_id": 3448433,
+        "iso_code": "SP",
+        "names": {
+          "de": "São Paulo",
+          "en": "São Paulo",
+          "es": "São Paulo",
+          "fr": "São Paulo",
+          "ja": "サンパウロ州",
+          "pt-BR": "São Paulo",
+          "ru": "Сан-Паулу"
+        }
+      }
+    ]
+  },
   "188.193.88.199/23": {
     "city": {
       "geoname_id": 2867714,

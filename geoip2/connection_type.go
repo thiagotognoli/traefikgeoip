@@ -10,7 +10,7 @@ func readConnectionTypeMap(result *ConnectionType, buffer []byte, mapSize, offse
 		if err != nil {
 			return 0, err
 		}
-		switch b2s(key) {
+		switch bytesToString(key) {
 		case "connection_type":
 			result.ConnectionType, offset, err = readString(buffer, offset)
 			if err != nil {

@@ -174,7 +174,7 @@ func readString(buffer []byte, offset uint) (string, uint, error) {
 	switch dataType {
 	case dataTypeString:
 		newOffset := offset + size
-		return b2s(buffer[offset:newOffset]), newOffset, nil
+		return bytesToString(buffer[offset:newOffset]), newOffset, nil
 	case dataTypePointer:
 		pointer, newOffset, err := readPointer(buffer, size, offset)
 		if err != nil {
@@ -187,7 +187,7 @@ func readString(buffer []byte, offset uint) (string, uint, error) {
 		if dataType != dataTypeString {
 			return "", 0, errors.New("invalid string pointer type: " + strconv.Itoa(int(dataType)))
 		}
-		return b2s(buffer[offset : offset+size]), newOffset, nil
+		return bytesToString(buffer[offset : offset+size]), newOffset, nil
 	default:
 		return "", 0, errors.New("invalid string type: " + strconv.Itoa(int(dataType)))
 	}
@@ -252,12 +252,12 @@ func readStringMapMap(buffer []byte, mapSize, offset uint) (map[string]string, u
 				return nil, 0, errors.New("map key must be a string, got: " + strconv.Itoa(int(dataType)))
 			}
 			offset = newOffset
-			result[b2s(key)] = b2s(buffer[valueOffset : valueOffset+size])
+			result[bytesToString(key)] = bytesToString(buffer[valueOffset : valueOffset+size])
 		case dataTypeString:
 			newOffset := offset + size
-			value := b2s(buffer[offset:newOffset])
+			value := bytesToString(buffer[offset:newOffset])
 			offset = newOffset
-			result[b2s(key)] = value
+			result[bytesToString(key)] = value
 		default:
 			return nil, 0, errors.New("invalid data type of key " + string(key) + ": " + strconv.Itoa(int(dataType)))
 		}
@@ -364,6 +364,44 @@ func bytesToFloat64(buffer []byte) float64 {
 	return math.Float64frombits(bits)
 }
 
-func b2s(value []byte) string {
-	return string(value)
+func bytesToString(value []byte) string {
+	// return string(value)
+	// return iso88591ToUtf8(string(value))
+	// return bytesInIso88591ToUtf8(value)
+	return utf8ToIso88591(value)
+}
+
+// func bytesInIso88591ToUtf8(value []byte) string {
+// 	var utf8Output []byte
+// 	for _, b := range value {
+// 		if b < 0x80 {
+// 			// ASCII compatível com UTF-8, basta adicionar diretamente
+// 			utf8Output = append(utf8Output, b)
+// 		} else {
+// 			// Convertendo caracteres ISO-8859-1 para UTF-8
+// 			utf8Output = append(utf8Output, 0xC0|(b>>6), 0x80|(b&0x3F))
+// 		}
+// 	}
+// 	return string(utf8Output)
+// }
+
+// func utf8ToIso88591 recebe uma sequência de bytes em UTF-8 e retorna uma string em ISO-8859-1.
+func utf8ToIso88591(value []byte) string {
+	var isoOutput []byte
+	for i := 0; i < len(value); i++ {
+		b := value[i]
+		if b < 0x80 {
+			// ASCII compatível com ISO-8859-1, basta adicionar diretamente
+			isoOutput = append(isoOutput, b)
+		} else if (b&0xE0) == 0xC0 && i+1 < len(value) && (value[i+1]&0xC0) == 0x80 {
+			// Conversão de UTF-8 para ISO-8859-1: dois bytes (110xxxxx 10xxxxxx)
+			isoByte := ((b & 0x1F) << 6) | (value[i+1] & 0x3F)
+			isoOutput = append(isoOutput, isoByte)
+			i++ // Pular o próximo byte já processado
+		} else {
+			// Caracteres fora do ISO-8859-1 não podem ser convertidos, então substituímos por '?'
+			isoOutput = append(isoOutput, '?')
+		}
+	}
+	return string(isoOutput)
 }

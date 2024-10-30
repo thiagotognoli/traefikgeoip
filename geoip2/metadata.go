@@ -40,7 +40,7 @@ func readMetadata(buffer []byte) (*Metadata, error) {
 			return nil, err
 		}
 		newOffset := uint(0)
-		switch b2s(key) {
+		switch bytesToString(key) {
 		case "binary_format_major_version":
 			if dataType != dataTypeUint16 {
 				return nil, errors.New("invalid binary_format_major_version type: " + strconv.Itoa(int(dataType)))
@@ -64,7 +64,7 @@ func readMetadata(buffer []byte) (*Metadata, error) {
 				return nil, errors.New("invalid database_type type: " + strconv.Itoa(int(dataType)))
 			}
 			newOffset = offset + size
-			metadata.DatabaseType = b2s(buffer[offset:newOffset])
+			metadata.DatabaseType = bytesToString(buffer[offset:newOffset])
 		case "description":
 			if dataType != dataTypeMap {
 				return nil, errors.New("invalid description type: " + strconv.Itoa(int(dataType)))

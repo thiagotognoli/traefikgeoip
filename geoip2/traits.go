@@ -43,7 +43,7 @@ func readTraitsMap(traits *Traits, buffer []byte, mapSize, offset uint) (uint, e
 		if err != nil {
 			return 0, err
 		}
-		switch b2s(key) {
+		switch bytesToString(key) {
 		case "is_anonymous_proxy":
 			traits.IsAnonymousProxy, offset, err = readBool(buffer, offset)
 			if err != nil {
