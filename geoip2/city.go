@@ -43,7 +43,7 @@ func readCityMap(city *City, buffer []byte, mapSize, offset uint) (uint, error) 
 		if err != nil {
 			return 0, err
 		}
-		switch bytesToString(key) {
+		switch bytesToKeyString(key) {
 		case "geoname_id":
 			city.GeoNameID, offset, err = readUInt32(buffer, offset)
 			if err != nil {

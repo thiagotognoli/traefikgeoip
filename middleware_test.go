@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"unicode/utf8"
 
 	mw "github.com/thiagotognoli/traefikgeoip"
 	lmw "github.com/thiagotognoli/traefikgeoip/lib"
@@ -182,29 +183,40 @@ func TestGeoIPCountryDBFromRemoteAddr(t *testing.T) {
 	assertHeader(t, req, lmw.IPAddressHeader, ValidIP)
 }
 
-// func TestGeoIpCityWithSpecialCharacters(t *testing.T) {
-// 	mwCfg := mw.CreateConfig()
-// 	mwCfg.CityDBPath = "data/mmdb/GeoLite2-City.mmdb"
+func TestGeoIpCityWithSpecialCharacters(t *testing.T) {
+	mwCfg := mw.CreateConfig()
+	mwCfg.CityDBPath = "data/mmdb/GeoLite2-City.mmdb"
+	mwCfg.Iso88591 = false
 
-// 	next := http.HandlerFunc(func(_ http.ResponseWriter, _ *http.Request) {})
-// 	mw.ResetLookup()
-// 	instance, _ := mw.New(context.TODO(), next, mwCfg, "traefik-geoip")
+	next := http.HandlerFunc(func(_ http.ResponseWriter, _ *http.Request) {})
+	mw.ResetLookup()
+	instance, _ := mw.New(context.TODO(), next, mwCfg, "traefik-geoip")
 
-// 	req := httptest.NewRequest(http.MethodGet, "http://localhost", nil)
-// 	req.RemoteAddr = fmt.Sprintf("%s:9999", "179.96.134.192")
-// 	instance.ServeHTTP(httptest.NewRecorder(), req)
+	req := httptest.NewRequest(http.MethodGet, "http://localhost", nil)
+	req.RemoteAddr = fmt.Sprintf("%s:9999", "179.96.134.192")
+	instance.ServeHTTP(httptest.NewRecorder(), req)
 
-// 	assertHeader(t, req, lmw.CountryCodeHeader, "BR")
-// 	assertHeader(t, req, lmw.CountryHeader, "Brazil")
-// 	assertHeader(t, req, lmw.CityHeader, "Marília")
-// 	city := req.Header.Get(lmw.CityHeader)
-// 	if utf8.ValidString(city) {
-// 		log.Printf("City is valid UTF-8 %s", city)
-// 	} else {
-// 		log.Printf("City is NOT valid UTF-8 %s", city)
-// 	}
-// 	assertHeader(t, req, lmw.IPAddressHeader, "179.96.134.192")
-// }
+	city := req.Header.Get(lmw.CityHeader)
+
+	// mwCfg.Iso88591 = true        77 97 114 237 108 105 97
+	// mwCfg.Iso88591 = false       77 97 114 195 173 108 105 97
+	// log.Printf("City is valid UTF-8 %s", city)
+	// cityb := []byte(city)
+	// for _, b := range cityb {
+	// 	log.Printf("City byte: %d", b)
+	// }
+	// if !utf8.ValidString(city) {
+	// 	t.Fatalf("City is NOT valid UTF-8 %s", city)
+	// }
+
+	assertHeader(t, req, lmw.CountryCodeHeader, "BR")
+	assertHeader(t, req, lmw.CountryHeader, "Brazil")
+	assertHeader(t, req, lmw.CityHeader, "Marília")
+	if !utf8.ValidString(city) {
+		t.Fatalf("City is NOT valid UTF-8 %s", city)
+	}
+	assertHeader(t, req, lmw.IPAddressHeader, "179.96.134.192")
+}
 
 func assertHeader(t *testing.T, req *http.Request, key, expected string) {
 	t.Helper()

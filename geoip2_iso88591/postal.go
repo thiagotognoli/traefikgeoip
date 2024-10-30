@@ -1,18 +1,18 @@
-package geoip2
+package geoip2_iso88591
 
 import (
 	"errors"
 	"strconv"
 )
 
-func readContinent(continent *Continent, buffer []byte, offset uint) (uint, error) {
+func readPostal(postal *Postal, buffer []byte, offset uint) (uint, error) {
 	dataType, size, offset, err := readControl(buffer, offset)
 	if err != nil {
 		return 0, err
 	}
 	switch dataType {
 	case dataTypeMap:
-		return readContinentMap(continent, buffer, size, offset)
+		return readPostalMap(postal, buffer, size, offset)
 	case dataTypePointer:
 		pointer, newOffset, err := readPointer(buffer, size, offset)
 		if err != nil {
@@ -23,19 +23,19 @@ func readContinent(continent *Continent, buffer []byte, offset uint) (uint, erro
 			return 0, err
 		}
 		if dataType != dataTypeMap {
-			return 0, errors.New("invalid continent pointer type: " + strconv.Itoa(int(dataType)))
+			return 0, errors.New("invalid postal pointer type: " + strconv.Itoa(int(dataType)))
 		}
-		_, err = readContinentMap(continent, buffer, size, offset)
+		_, err = readPostalMap(postal, buffer, size, offset)
 		if err != nil {
 			return 0, err
 		}
 		return newOffset, nil
 	default:
-		return 0, errors.New("invalid continent type: " + strconv.Itoa(int(dataType)))
+		return 0, errors.New("invalid postal type: " + strconv.Itoa(int(dataType)))
 	}
 }
 
-func readContinentMap(continent *Continent, buffer []byte, mapSize, offset uint) (uint, error) {
+func readPostalMap(postal *Postal, buffer []byte, mapSize, offset uint) (uint, error) {
 	var key []byte
 	var err error
 	for i := uint(0); i < mapSize; i++ {
@@ -44,23 +44,18 @@ func readContinentMap(continent *Continent, buffer []byte, mapSize, offset uint)
 			return 0, err
 		}
 		switch bytesToKeyString(key) {
-		case "geoname_id":
-			continent.GeoNameID, offset, err = readUInt32(buffer, offset)
-			if err != nil {
-				return 0, err
-			}
 		case "code":
-			continent.Code, offset, err = readString(buffer, offset)
+			postal.Code, offset, err = readString(buffer, offset)
 			if err != nil {
 				return 0, err
 			}
-		case "names":
-			continent.Names, offset, err = readStringMap(buffer, offset)
+		case "confidence":
+			postal.Confidence, offset, err = readUInt16(buffer, offset)
 			if err != nil {
 				return 0, err
 			}
 		default:
-			return 0, errors.New("unknown continent key: " + string(key))
+			return 0, errors.New("unknown postal key: " + string(key))
 		}
 	}
 	return offset, nil

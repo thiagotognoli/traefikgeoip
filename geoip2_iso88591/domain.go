@@ -1,8 +1,8 @@
-package geoip2
+package geoip2_iso88591
 
 import "errors"
 
-func readConnectionTypeMap(result *ConnectionType, buffer []byte, mapSize, offset uint) (uint, error) {
+func readDomainMap(result *Domain, buffer []byte, mapSize, offset uint) (uint, error) {
 	var key []byte
 	var err error
 	for i := uint(0); i < mapSize; i++ {
@@ -11,13 +11,13 @@ func readConnectionTypeMap(result *ConnectionType, buffer []byte, mapSize, offse
 			return 0, err
 		}
 		switch bytesToKeyString(key) {
-		case "connection_type":
-			result.ConnectionType, offset, err = readString(buffer, offset)
+		case "domain":
+			result.Domain, offset, err = readString(buffer, offset)
 			if err != nil {
 				return 0, err
 			}
 		default:
-			return 0, errors.New("unknown connectionType key: " + string(key))
+			return 0, errors.New("unknown domain key: " + string(key))
 		}
 	}
 	return offset, nil

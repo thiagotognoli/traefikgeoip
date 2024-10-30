@@ -1,4 +1,4 @@
-package geoip2
+package geoip2_iso88591
 
 import (
 	"encoding/binary"
@@ -369,8 +369,8 @@ func bytesToKeyString(value []byte) string {
 }
 
 func bytesToString(value []byte) string {
-	// return string(bytesUtf8ToIso88591(value))
-	return string(value)
+	return string(bytesUtf8ToIso88591(value))
+	// return string(value)
 }
 
 // bytesUtf8ToIso88591 convert a UTF-8 string in a sequence of bytes ISO-8859-1.

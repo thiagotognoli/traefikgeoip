@@ -38,7 +38,7 @@ test-yaegi: && _clean-yaegi
   mkdir -p ${WRK}
   ln -s `pwd` "${WRK}"
   cd "${WRK}/$(basename `pwd`)"
-  env GOPATH="${TMP}/go" yaegi test -v .
+  env GOPATH="${TMP}/go" yaegi test -v
 
 # lint and test
 test: format lint test-go test-yaegi

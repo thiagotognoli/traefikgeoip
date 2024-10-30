@@ -1,4 +1,4 @@
-package geoip2
+package geoip2_iso88591
 
 import (
 	"errors"

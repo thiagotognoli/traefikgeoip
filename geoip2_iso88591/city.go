@@ -1,18 +1,18 @@
-package geoip2
+package geoip2_iso88591
 
 import (
 	"errors"
 	"strconv"
 )
 
-func readContinent(continent *Continent, buffer []byte, offset uint) (uint, error) {
+func readCity(city *City, buffer []byte, offset uint) (uint, error) {
 	dataType, size, offset, err := readControl(buffer, offset)
 	if err != nil {
 		return 0, err
 	}
 	switch dataType {
 	case dataTypeMap:
-		return readContinentMap(continent, buffer, size, offset)
+		return readCityMap(city, buffer, size, offset)
 	case dataTypePointer:
 		pointer, newOffset, err := readPointer(buffer, size, offset)
 		if err != nil {
@@ -23,19 +23,19 @@ func readContinent(continent *Continent, buffer []byte, offset uint) (uint, erro
 			return 0, err
 		}
 		if dataType != dataTypeMap {
-			return 0, errors.New("invalid continent pointer type: " + strconv.Itoa(int(dataType)))
+			return 0, errors.New("invalid city pointer type: " + strconv.Itoa(int(dataType)))
 		}
-		_, err = readContinentMap(continent, buffer, size, offset)
+		_, err = readCityMap(city, buffer, size, offset)
 		if err != nil {
 			return 0, err
 		}
 		return newOffset, nil
 	default:
-		return 0, errors.New("invalid continent type: " + strconv.Itoa(int(dataType)))
+		return 0, errors.New("invalid city type: " + strconv.Itoa(int(dataType)))
 	}
 }
 
-func readContinentMap(continent *Continent, buffer []byte, mapSize, offset uint) (uint, error) {
+func readCityMap(city *City, buffer []byte, mapSize, offset uint) (uint, error) {
 	var key []byte
 	var err error
 	for i := uint(0); i < mapSize; i++ {
@@ -45,22 +45,22 @@ func readContinentMap(continent *Continent, buffer []byte, mapSize, offset uint)
 		}
 		switch bytesToKeyString(key) {
 		case "geoname_id":
-			continent.GeoNameID, offset, err = readUInt32(buffer, offset)
-			if err != nil {
-				return 0, err
-			}
-		case "code":
-			continent.Code, offset, err = readString(buffer, offset)
+			city.GeoNameID, offset, err = readUInt32(buffer, offset)
 			if err != nil {
 				return 0, err
 			}
 		case "names":
-			continent.Names, offset, err = readStringMap(buffer, offset)
+			city.Names, offset, err = readStringMap(buffer, offset)
+			if err != nil {
+				return 0, err
+			}
+		case "confidence":
+			city.Confidence, offset, err = readUInt16(buffer, offset)
 			if err != nil {
 				return 0, err
 			}
 		default:
-			return 0, errors.New("unknown continent key: " + string(key))
+			return 0, errors.New("unknown city key: " + string(key))
 		}
 	}
 	return offset, nil

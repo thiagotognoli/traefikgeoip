@@ -8,11 +8,11 @@ summary: 'Getting data from GeoIP databases and pass it downstream via HTTP requ
 
 
 testData:
-  cityDbPath: 'GeoLite2-Country.mmdb'
-  asnDbPath: 'GeoLite2-ASN.mmdb'
-  countryDbPath: 'GeoLite2-Country.mmdb'
-  preferXForwardedForHeader: false
-  ipHeader: 'X-IP'
-  failInError: true
-  debug: false
-  iso88591: true
+  cityDbPath: 'data/mmdb/GeoLite2-City.mmdb'
+  # asnDbPath: 'GeoLite2-ASN.mmdb'
+  # countryDbPath: 'GeoLite2-Country.mmdb'
+  # preferXForwardedForHeader: false
+  # ipHeader: 'X-IP'
+  # failInError: true
+  # debug: false
+  # iso88591: true
