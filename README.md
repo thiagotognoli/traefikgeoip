@@ -6,6 +6,8 @@ for getting data from
 [MaxMind GeoIP databases](https://www.maxmind.com/en/geoip2-services-and-databases) 
 and pass it downstream via HTTP request headers.
 
+Highly dynamically configurable, with ASN, City and Country data
+
 Supports both 
 [GeoIP2](https://www.maxmind.com/en/geoip2-databases) 
 and 
