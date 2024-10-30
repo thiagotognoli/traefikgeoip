@@ -2,13 +2,13 @@
 @default:
   just --list
 
-@_prepare:
+data:
   #!/usr/bin/env bash
   cd data
-  mkdir -p tmp
-  go run main.go -i GeoLite2-City.json -o tmp/GeoLite2-City.mmdb -t GeoLite2-City
-  go run main.go -i GeoLite2-ASN.json -o tmp/GeoLite2-ASN.mmdb -t GeoLite2-ASN
-  go run main.go -i GeoLite2-Country.json -o tmp/GeoLite2-Country.mmdb -t GeoLite2-Country
+  mkdir -p mmdb
+  go run main.go -i GeoLite2-City.json -o mmdb/GeoLite2-City.mmdb -t GeoLite2-City
+  go run main.go -i GeoLite2-ASN.json -o mmdb/GeoLite2-ASN.mmdb -t GeoLite2-ASN
+  go run main.go -i GeoLite2-Country.json -o mmdb/GeoLite2-Country.mmdb -t GeoLite2-Country
 
 dist:
   #!/usr/bin/env bash
@@ -39,13 +39,9 @@ test-yaegi: && _clean-yaegi
   ln -s `pwd` "${WRK}"
   cd "${WRK}/$(basename `pwd`)"
   env GOPATH="${TMP}/go" yaegi test -v .
-#  WRKINCSW="${TMP}/go/src/github.com/IncSW"
-#  mkdir -p ${WRKINCSW}
-#  ln -s `pwd`/vendor/github.com/IncSW/geoip2 "${WRKINCSW}"
-#  export GOFLAGS=-mod=vendor
 
 # lint and test
-test: _prepare format lint test-go test-yaegi
+test: format lint test-go test-yaegi
 
 clean:
   rm -rf *.mmdb

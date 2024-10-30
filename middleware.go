@@ -114,20 +114,20 @@ func factoryLookups(cfg *lib.Config, name string) (lib.LookupGeoIPCity, lib.Look
 
 	if cfg.CityDBPath != "" {
 		var err error
-		lookupCity, err = lib.NewLookupCity(cfg.CityDBPath, name)
+		lookupCity, err = lib.NewLookupCity(cfg.CityDBPath, name, cfg.Iso88591)
 		if err != nil {
 			return nil, nil, nil, err
 		}
 	} else if cfg.CountryDBPath != "" {
 		var err error
-		lookupCountry, err = lib.NewLookupCountry(cfg.CountryDBPath, name)
+		lookupCountry, err = lib.NewLookupCountry(cfg.CountryDBPath, name, cfg.Iso88591)
 		if err != nil {
 			return nil, nil, nil, err
 		}
 	}
 	if cfg.AsnDBPath != "" {
 		var err error
-		lookupAsn, err = lib.NewLookupAsn(cfg.AsnDBPath, name)
+		lookupAsn, err = lib.NewLookupAsn(cfg.AsnDBPath, name, cfg.Iso88591)
 		if err != nil {
 			return nil, nil, nil, err
 		}

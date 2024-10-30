@@ -28,6 +28,7 @@ type Options struct {
 	FailInError               bool   `json:"failInError,omitempty"`
 	Debug                     bool   `json:"debug,omitempty"`
 	LightMode                 bool   `json:"lightMode,omitempty"`
+	Iso88591                  bool   `json:"iso88591,omitempty"`
 }
 
 // Config the plugin configuration.
@@ -40,6 +41,7 @@ type Config struct {
 	FailInError               bool   `json:"failInError,omitempty"`
 	Debug                     bool   `json:"debug,omitempty"`
 	LightMode                 bool   `json:"lightMode,omitempty"`
+	Iso88591                  bool   `json:"iso88591,omitempty"`
 }
 
 // ConfigToOptions converts the plugin configuration to plugin options.
@@ -50,6 +52,7 @@ func ConfigToOptions(config *Config) Options {
 		FailInError:               config.FailInError,
 		Debug:                     config.Debug,
 		LightMode:                 config.LightMode,
+		Iso88591:                  config.Iso88591,
 	}
 }
 

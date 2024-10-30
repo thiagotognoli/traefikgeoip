@@ -55,6 +55,7 @@ services:
       - "traefik.http.middlewares.traefikgeoip.plugin.traefikgeoip.asnDbPath=/usr/share/GeoIP/GeoLite2-ASN.mmdb"
       - "traefik.http.middlewares.traefikgeoip.plugin.traefikgeoip.lightMode=true"
       - "traefik.http.middlewares.traefikgeoip.plugin.traefikgeoip.ipHeader=X-IP"
+      - "traefik.http.middlewares.traefikgeoip.plugin.traefikgeoip.iso88591=true"
       # - "traefik.http.middlewares.traefikgeoip.plugin.traefikgeoip.preferXForwardedForHeader=true"
       # - "traefik.http.middlewares.traefikgeoip.plugin.traefikgeoip.failInError=true"
       - "traefik.http.routers.whoami.middlewares=traefikgeoip"
@@ -160,9 +161,10 @@ cityDbPath | Container path to City GeoIP database.
 countryDbPath | Container path to Country GeoIP database.
 asnDbPath | Container path to ASN GeoIP database.
 preferXForwardedForHeader | Should `X-Forwarded-For` header be used to extract IP address. Default `false`.
-ipHeader | Alternate Header of IP. Default `""`{ .
-failInError | Not start pulgin in error. Default `false`.
+ipHeader | Alternate Header of IP. Default `""`.
+failInError | Not start plugin in error. Default `false`.
 debug | Debug messages: false. Default `false`.
+iso88591 | Encode in ISO-8859-1; Default: `false`.
 
 
 ## Development

@@ -15,3 +15,4 @@ testData:
   ipHeader: 'X-IP'
   failInError: true
   debug: false
+  iso88591: true

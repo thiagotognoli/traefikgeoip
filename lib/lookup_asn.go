@@ -19,7 +19,20 @@ type GeoIPAsnResult struct {
 type LookupGeoIPAsn func(ip net.IP) (*GeoIPAsnResult, error)
 
 // CreateAsnDBLookup CreateCountryDBLookup.
-func CreateAsnDBLookup(rdr *geoip2.ASNReader) LookupGeoIPAsn {
+func CreateAsnDBLookup(rdr *geoip2.ASNReader, iso88591 bool) LookupGeoIPAsn {
+	if iso88591 {
+		return func(ip net.IP) (*GeoIPAsnResult, error) {
+			rec, err := rdr.Lookup(ip)
+			if err != nil {
+				return nil, fmt.Errorf("%w", err)
+			}
+			returnVal := GeoIPAsnResult{
+				number:       strconv.Itoa(int(rec.AutonomousSystemNumber)),
+				organization: stringUtf8ToIso88591(rec.AutonomousSystemOrganization),
+			}
+			return &returnVal, nil
+		}
+	}
 	return func(ip net.IP) (*GeoIPAsnResult, error) {
 		rec, err := rdr.Lookup(ip)
 		if err != nil {
@@ -34,7 +47,7 @@ func CreateAsnDBLookup(rdr *geoip2.ASNReader) LookupGeoIPAsn {
 }
 
 // NewLookupAsn Create a new Lookup.
-func NewLookupAsn(dbPath, name string) (LookupGeoIPAsn, error) {
+func NewLookupAsn(dbPath, name string, iso88591 bool) (LookupGeoIPAsn, error) {
 	if _, err := os.Stat(dbPath); err != nil {
 		return nil, fmt.Errorf("asn DB not found: db=%s, name=%s, err=%w", dbPath, name, err)
 	}
@@ -44,7 +57,7 @@ func NewLookupAsn(dbPath, name string) (LookupGeoIPAsn, error) {
 	if err != nil {
 		return nil, fmt.Errorf("asn lookup DB is not initialized: db=%s, name=%s, err=%w", dbPath, name, err)
 	}
-	lookupAsn = CreateAsnDBLookup(rdr)
+	lookupAsn = CreateAsnDBLookup(rdr, iso88591)
 	// log.Printf("[geoip2] ASN lookup DB initialized: db=%s, name=%s, lookup=%v", dbPath, name, lookupAsn)
 	return lookupAsn, nil
 }

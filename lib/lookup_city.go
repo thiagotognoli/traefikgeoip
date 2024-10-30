@@ -29,7 +29,40 @@ const kmToMeters = 1000
 type LookupGeoIPCity func(ip net.IP) (*GeoIPCityResult, error)
 
 // CreateCityDBLookup CreateCityDBLookup.
-func CreateCityDBLookup(rdr *geoip2.CityReader) LookupGeoIPCity {
+func CreateCityDBLookup(rdr *geoip2.CityReader, iso88591 bool) LookupGeoIPCity {
+	if iso88591 { //nolint:nestif
+		return func(ip net.IP) (*GeoIPCityResult, error) {
+			rec, err := rdr.Lookup(ip)
+			if err != nil {
+				return nil, fmt.Errorf("%w", err)
+			}
+			returnVal := GeoIPCityResult{
+				country:        Unknown,
+				countryCode:    rec.Country.ISOCode,
+				region:         Unknown,
+				regionCode:     Unknown,
+				city:           Unknown,
+				postalCode:     rec.Postal.Code,
+				latitude:       strconv.FormatFloat(rec.Location.Latitude, 'f', -1, 64),
+				longitude:      strconv.FormatFloat(rec.Location.Longitude, 'f', -1, 64),
+				accuracyRadius: strconv.Itoa(int(rec.Location.AccuracyRadius) * kmToMeters),
+				geohash:        EncodeGeoHash(rec.Location.Latitude, rec.Location.Longitude),
+			}
+			if country, ok := rec.Country.Names["en"]; ok {
+				returnVal.country = stringUtf8ToIso88591(country)
+			}
+			if city, ok := rec.City.Names["en"]; ok {
+				returnVal.city = stringUtf8ToIso88591(city)
+			}
+			if rec.Subdivisions != nil {
+				if region, ok := rec.Subdivisions[0].Names["en"]; ok {
+					returnVal.region = stringUtf8ToIso88591(region)
+				}
+				returnVal.regionCode = rec.Subdivisions[0].ISOCode
+			}
+			return &returnVal, nil
+		}
+	}
 	return func(ip net.IP) (*GeoIPCityResult, error) {
 		rec, err := rdr.Lookup(ip)
 		if err != nil {
@@ -48,16 +81,13 @@ func CreateCityDBLookup(rdr *geoip2.CityReader) LookupGeoIPCity {
 			geohash:        EncodeGeoHash(rec.Location.Latitude, rec.Location.Longitude),
 		}
 		if country, ok := rec.Country.Names["en"]; ok {
-			// returnVal.country = sanitizeUTF8(country)
 			returnVal.country = country
 		}
 		if city, ok := rec.City.Names["en"]; ok {
-			// returnVal.city = sanitizeUTF8(city)
 			returnVal.city = city
 		}
 		if rec.Subdivisions != nil {
 			if region, ok := rec.Subdivisions[0].Names["en"]; ok {
-				// returnVal.region = sanitizeUTF8(region)
 				returnVal.region = region
 			}
 			returnVal.regionCode = rec.Subdivisions[0].ISOCode
@@ -67,7 +97,7 @@ func CreateCityDBLookup(rdr *geoip2.CityReader) LookupGeoIPCity {
 }
 
 // NewLookupCity Create a new Lookup.
-func NewLookupCity(dbPath, name string) (LookupGeoIPCity, error) {
+func NewLookupCity(dbPath, name string, iso88591 bool) (LookupGeoIPCity, error) {
 	if _, err := os.Stat(dbPath); err != nil {
 		return nil, fmt.Errorf("city DB not found: db=%s, name=%s, err=%w", dbPath, name, err)
 	}
@@ -77,7 +107,7 @@ func NewLookupCity(dbPath, name string) (LookupGeoIPCity, error) {
 	if err != nil {
 		return nil, fmt.Errorf("city lookup DB is not initialized: db=%s, name=%s, err=%w", dbPath, name, err)
 	}
-	lookupCity = CreateCityDBLookup(rdr)
+	lookupCity = CreateCityDBLookup(rdr, iso88591)
 	// log.Printf("[geoip2] City lookup DB initialized: db=%s, name=%s, lookup=%v", dbPath, name, lookupCity)
 	return lookupCity, nil
 }

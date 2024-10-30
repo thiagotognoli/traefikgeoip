@@ -365,43 +365,5 @@ func bytesToFloat64(buffer []byte) float64 {
 }
 
 func bytesToString(value []byte) string {
-	// return string(value)
-	// return iso88591ToUtf8(string(value))
-	// return bytesInIso88591ToUtf8(value)
-	return utf8ToIso88591(value)
-}
-
-// func bytesInIso88591ToUtf8(value []byte) string {
-// 	var utf8Output []byte
-// 	for _, b := range value {
-// 		if b < 0x80 {
-// 			// ASCII compatível com UTF-8, basta adicionar diretamente
-// 			utf8Output = append(utf8Output, b)
-// 		} else {
-// 			// Convertendo caracteres ISO-8859-1 para UTF-8
-// 			utf8Output = append(utf8Output, 0xC0|(b>>6), 0x80|(b&0x3F))
-// 		}
-// 	}
-// 	return string(utf8Output)
-// }
-
-// func utf8ToIso88591 recebe uma sequência de bytes em UTF-8 e retorna uma string em ISO-8859-1.
-func utf8ToIso88591(value []byte) string {
-	var isoOutput []byte
-	for i := 0; i < len(value); i++ {
-		b := value[i]
-		if b < 0x80 {
-			// ASCII compatível com ISO-8859-1, basta adicionar diretamente
-			isoOutput = append(isoOutput, b)
-		} else if (b&0xE0) == 0xC0 && i+1 < len(value) && (value[i+1]&0xC0) == 0x80 {
-			// Conversão de UTF-8 para ISO-8859-1: dois bytes (110xxxxx 10xxxxxx)
-			isoByte := ((b & 0x1F) << 6) | (value[i+1] & 0x3F)
-			isoOutput = append(isoOutput, isoByte)
-			i++ // Pular o próximo byte já processado
-		} else {
-			// Caracteres fora do ISO-8859-1 não podem ser convertidos, então substituímos por '?'
-			isoOutput = append(isoOutput, '?')
-		}
-	}
-	return string(isoOutput)
+	return string(value)
 }

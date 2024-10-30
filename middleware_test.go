@@ -39,7 +39,7 @@ func TestGeoIPConfig(t *testing.T) {
 
 func TestGeoIPBasic(t *testing.T) {
 	mwCfg := mw.CreateConfig()
-	mwCfg.CityDBPath = "data/tmp/GeoLite2-City.mmdb"
+	mwCfg.CityDBPath = "data/mmdb/GeoLite2-City.mmdb"
 
 	called := false
 	next := http.HandlerFunc(func(_ http.ResponseWriter, _ *http.Request) {
@@ -96,7 +96,7 @@ func TestMissingGeoIPDB(t *testing.T) {
 
 func TestGeoIPFromRemoteAddr(t *testing.T) {
 	mwCfg := mw.CreateConfig()
-	mwCfg.CityDBPath = "data/tmp/GeoLite2-City.mmdb"
+	mwCfg.CityDBPath = "data/mmdb/GeoLite2-City.mmdb"
 
 	next := http.HandlerFunc(func(_ http.ResponseWriter, _ *http.Request) {})
 	mw.ResetLookup()
@@ -129,7 +129,7 @@ func TestGeoIPFromRemoteAddr(t *testing.T) {
 
 func TestGeoIPFromXForwardedFor(t *testing.T) {
 	mwCfg := mw.CreateConfig()
-	mwCfg.CityDBPath = "data/tmp/GeoLite2-City.mmdb"
+	mwCfg.CityDBPath = "data/mmdb/GeoLite2-City.mmdb"
 	mwCfg.PreferXForwardedForHeader = true
 
 	next := http.HandlerFunc(func(_ http.ResponseWriter, _ *http.Request) {})
@@ -167,7 +167,7 @@ func TestGeoIPFromXForwardedFor(t *testing.T) {
 
 func TestGeoIPCountryDBFromRemoteAddr(t *testing.T) {
 	mwCfg := mw.CreateConfig()
-	mwCfg.CountryDBPath = "data/tmp/GeoLite2-Country.mmdb"
+	mwCfg.CountryDBPath = "data/mmdb/GeoLite2-Country.mmdb"
 
 	next := http.HandlerFunc(func(_ http.ResponseWriter, _ *http.Request) {})
 	mw.ResetLookup()
@@ -184,7 +184,7 @@ func TestGeoIPCountryDBFromRemoteAddr(t *testing.T) {
 
 // func TestGeoIpCityWithSpecialCharacters(t *testing.T) {
 // 	mwCfg := mw.CreateConfig()
-// 	mwCfg.CityDBPath = "data/tmp/GeoLite2-City.mmdb"
+// 	mwCfg.CityDBPath = "data/mmdb/GeoLite2-City.mmdb"
 
 // 	next := http.HandlerFunc(func(_ http.ResponseWriter, _ *http.Request) {})
 // 	mw.ResetLookup()

@@ -33,6 +33,7 @@ services:
       - "traefik.http.middlewares.traefikgeoip.plugin.traefikgeoip.asnDbPath=/usr/share/GeoIP/GeoLite2-ASN.mmdb"
       - "traefik.http.middlewares.traefikgeoip.plugin.traefikgeoip.lightMode=true"
       - "traefik.http.middlewares.traefikgeoip.plugin.traefikgeoip.ipHeader=X-IP"
+      - "traefik.http.middlewares.traefikgeoip.plugin.traefikgeoip.iso88591=true"
       # - "traefik.http.middlewares.traefikgeoip.plugin.traefikgeoip.preferXForwardedForHeader=true"
       # - "traefik.http.middlewares.traefikgeoip.plugin.traefikgeoip.failInError=true"
       - "traefik.http.routers.whoami.middlewares=traefikgeoip"
