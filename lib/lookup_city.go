@@ -48,13 +48,16 @@ func CreateCityDBLookup(rdr *geoip2.CityReader) LookupGeoIPCity {
 			geohash:        EncodeGeoHash(rec.Location.Latitude, rec.Location.Longitude),
 		}
 		if country, ok := rec.Country.Names["en"]; ok {
+			// returnVal.country = sanitizeUTF8(country)
 			returnVal.country = country
 		}
 		if city, ok := rec.City.Names["en"]; ok {
+			// returnVal.city = sanitizeUTF8(city)
 			returnVal.city = city
 		}
 		if rec.Subdivisions != nil {
 			if region, ok := rec.Subdivisions[0].Names["en"]; ok {
+				// returnVal.region = sanitizeUTF8(region)
 				returnVal.region = region
 			}
 			returnVal.regionCode = rec.Subdivisions[0].ISOCode
